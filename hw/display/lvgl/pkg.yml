@@ -1,0 +1,27 @@
+#
+# This is a repackaged version of LittlevGL for MyNewt
+#
+# Official information
+#   Web site: https://littlevgl.com/
+#   Author  : Gabor Kiss-Vamosi 
+#   Github  : https://github.com/littlevgl/lvgl
+#   License : MIT
+#
+
+pkg.name: hw/display/lvgl
+pkg.description: Open-source Embedded GUI Library
+pkg.author: "Stephane D'Alu <sdalu@sdalu.com>"
+pkg.homepage: "https://littlevgl.com/"
+pkg.keywords:
+    - hw
+    - display
+    - lvgl
+    - littlevgl
+
+pkg.deps:
+#   - net/ip
+
+pkg.cflags:
+#   - -Wno-unused
+#   - -Wno-error=address
+#   - -DLWIP_HTTPD_STRNSTR_PRIVATE=0
