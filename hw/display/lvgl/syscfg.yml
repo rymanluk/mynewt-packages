@@ -1,0 +1,15 @@
+# Package: hw/display/lvgl
+
+syscfg.defs:
+    LV_HORIZONTAL_RESOLUTION:
+        description: >
+            Horizontal resolution of the library
+        value: 320
+    LV_VERTICAL_RESOLUTION:
+        description: >
+            Vertical resolution of the library
+        value: 240
+    LV_DPI: 
+        description: >
+            DPI
+        value: 100
