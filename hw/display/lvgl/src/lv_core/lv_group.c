@@ -6,7 +6,7 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_core/lv_group.h"
+#include "lvgl/lv_core/lv_group.h"
 #if USE_LV_GROUP != 0
 #include <stddef.h>
 

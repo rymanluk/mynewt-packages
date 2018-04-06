@@ -6,7 +6,7 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_conf.h"
+#include "lvgl/lv_conf.h"
 #if USE_LV_SW != 0
 
 /*Testing of dependencies*/
@@ -14,8 +14,8 @@
 #error "lv_sw: lv_slider is required. Enable it in lv_conf.h (USE_LV_SLIDER  1) "
 #endif
 
-#include "lv_objx/lv_sw.h"
-#include "lv_themes/lv_theme.h"
+#include "lvgl/lv_objx/lv_sw.h"
+#include "lvgl/lv_themes/lv_theme.h"
 
 /*********************
  *      DEFINES

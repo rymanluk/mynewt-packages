@@ -6,16 +6,16 @@
 /*********************
  *      INCLUDES
  ********************/
-#include "lv_core/lv_indev.h"
-#include "lv_conf.h"
+#include "lvgl/lv_core/lv_indev.h"
+#include "lvgl/lv_conf.h"
 
-#include "lv_hal/lv_hal_tick.h"
-#include "lv_core/lv_group.h"
-#include "lv_core/lv_refr.h"
-#include "lv_misc/lv_task.h"
-#include "lv_misc/lv_math.h"
-#include "lv_draw/lv_draw_rbasic.h"
-#include "lv_core/lv_obj.h"
+#include "lvgl/lv_hal/lv_hal_tick.h"
+#include "lvgl/lv_core/lv_group.h"
+#include "lvgl/lv_core/lv_refr.h"
+#include "lvgl/lv_misc/lv_task.h"
+#include "lvgl/lv_misc/lv_math.h"
+#include "lvgl/lv_draw/lv_draw_rbasic.h"
+#include "lvgl/lv_core/lv_obj.h"
 
 /*********************
  *      DEFINES

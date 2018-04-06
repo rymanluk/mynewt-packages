@@ -7,7 +7,7 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_misc/lv_trigo.h"
+#include "lvgl/lv_misc/lv_trigo.h"
 
 /*********************
  *      DEFINES

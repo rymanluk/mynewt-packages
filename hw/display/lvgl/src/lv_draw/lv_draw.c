@@ -6,18 +6,18 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_conf.h"
+#include "lvgl/lv_conf.h"
 
 #include <stdio.h>
 #include <stdbool.h>
-#include "lv_draw/lv_draw.h"
-#include "lv_draw/lv_draw_rbasic.h"
-#include "lv_draw/lv_draw_vbasic.h"
-#include "lv_misc/lv_circ.h"
-#include "lv_misc/lv_fs.h"
-#include "lv_misc/lv_math.h"
-#include "lv_misc/lv_ufs.h"
-#include "lv_objx/lv_img.h"
+#include "lvgl/lv_draw/lv_draw.h"
+#include "lvgl/lv_draw/lv_draw_rbasic.h"
+#include "lvgl/lv_draw/lv_draw_vbasic.h"
+#include "lvgl/lv_misc/lv_circ.h"
+#include "lvgl/lv_misc/lv_fs.h"
+#include "lvgl/lv_misc/lv_math.h"
+#include "lvgl/lv_misc/lv_ufs.h"
+#include "lvgl/lv_objx/lv_img.h"
 
 /*********************
  *      DEFINES

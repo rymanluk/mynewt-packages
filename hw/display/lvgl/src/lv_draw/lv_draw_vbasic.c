@@ -3,22 +3,22 @@
  * 
  */
 
-#include "lv_conf.h"
+#include "lvgl/lv_conf.h"
 
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>
 
-#include "lv_hal/lv_hal_disp.h"
-#include "lv_misc/lv_area.h"
-#include "lv_misc/lv_font.h"
-#include "lv_misc/lv_color.h"
+#include "lvgl/lv_hal/lv_hal_disp.h"
+#include "lvgl/lv_misc/lv_area.h"
+#include "lvgl/lv_misc/lv_font.h"
+#include "lvgl/lv_misc/lv_color.h"
 
 #if LV_VDB_SIZE != 0
 
 #include <stddef.h>
-#include "lv_core/lv_vdb.h"
-#include "lv_draw/lv_draw.h"
+#include "lvgl/lv_core/lv_vdb.h"
+#include "lvgl/lv_draw/lv_draw.h"
 
 /*********************
  *      INCLUDES

@@ -2,12 +2,12 @@
  * @file lv_vdb.c
  * 
  */
-#include "lv_conf.h"
+#include "lvgl/lv_conf.h"
 #if LV_VDB_SIZE != 0
 
-#include "lv_hal/lv_hal_disp.h"
+#include "lvgl/lv_hal/lv_hal_disp.h"
 #include <stddef.h>
-#include "lv_core/lv_vdb.h"
+#include "lvgl/lv_core/lv_vdb.h"
 
 /*********************
  *      INCLUDES

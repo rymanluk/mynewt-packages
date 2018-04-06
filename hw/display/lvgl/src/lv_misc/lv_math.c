@@ -6,7 +6,7 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_misc/lv_math.h"
+#include "lvgl/lv_misc/lv_math.h"
 #include <stdbool.h>
 
 /*********************

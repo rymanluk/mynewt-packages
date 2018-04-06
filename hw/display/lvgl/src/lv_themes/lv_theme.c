@@ -6,7 +6,7 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_themes/lv_theme.h"
+#include "lvgl/lv_themes/lv_theme.h"
 
 /*********************
  *      DEFINES

@@ -11,9 +11,9 @@
  *********************/
 #include <stdint.h>
 #include <stddef.h>
-#include "lv_hal/lv_hal_disp.h"
-#include "lv_misc/lv_mem.h"
-#include "lv_core/lv_obj.h"
+#include "lvgl/lv_hal/lv_hal_disp.h"
+#include "lvgl/lv_misc/lv_mem.h"
+#include "lvgl/lv_core/lv_obj.h"
 
 /*********************
  *      DEFINES

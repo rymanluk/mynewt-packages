@@ -7,12 +7,12 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_conf.h"
+#include "lvgl/lv_conf.h"
 #if USE_LV_KB != 0
 
-#include "lv_objx/lv_kb.h"
-#include "lv_objx/lv_ta.h"
-#include "lv_themes/lv_theme.h"
+#include "lvgl/lv_objx/lv_kb.h"
+#include "lvgl/lv_objx/lv_ta.h"
+#include "lvgl/lv_themes/lv_theme.h"
 
 /*********************
  *      DEFINES

@@ -6,7 +6,7 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_conf.h"
+#include "lvgl/lv_conf.h"
 
 #if USE_LV_CONT != 0
 
@@ -14,13 +14,13 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "lv_objx/lv_cont.h"
-#include "lv_draw/lv_draw.h"
-#include "lv_draw/lv_draw_vbasic.h"
-#include "lv_themes/lv_theme.h"
-#include "lv_misc/lv_area.h"
-#include "lv_misc/lv_color.h"
-#include "lv_misc/lv_math.h"
+#include "lvgl/lv_objx/lv_cont.h"
+#include "lvgl/lv_draw/lv_draw.h"
+#include "lvgl/lv_draw/lv_draw_vbasic.h"
+#include "lvgl/lv_themes/lv_theme.h"
+#include "lvgl/lv_misc/lv_area.h"
+#include "lvgl/lv_misc/lv_color.h"
+#include "lvgl/lv_misc/lv_math.h"
 
 /*********************
  *      DEFINES

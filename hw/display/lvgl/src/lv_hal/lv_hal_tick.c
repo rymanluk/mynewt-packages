@@ -6,9 +6,9 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_hal/lv_hal_tick.h"
+#include "lvgl/lv_hal/lv_hal_tick.h"
 #include <stddef.h>
-#include "lv_conf.h"
+#include "lvgl/lv_conf.h"
 
 /*********************
  *      DEFINES

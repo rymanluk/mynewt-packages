@@ -6,14 +6,14 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_conf.h"
+#include "lvgl/lv_conf.h"
 #if USE_LV_LMETER != 0
 
-#include "lv_objx/lv_lmeter.h"
-#include "lv_draw/lv_draw.h"
-#include "lv_themes/lv_theme.h"
-#include "lv_core/lv_group.h"
-#include "lv_misc/lv_trigo.h"
+#include "lvgl/lv_objx/lv_lmeter.h"
+#include "lvgl/lv_draw/lv_draw.h"
+#include "lvgl/lv_themes/lv_theme.h"
+#include "lvgl/lv_core/lv_group.h"
+#include "lvgl/lv_misc/lv_trigo.h"
 
 /*********************
  *      DEFINES

@@ -10,8 +10,8 @@
 #include <stdint.h>
 #include <string.h>
 
-#include "lv_misc/lv_ll.h"
-#include "lv_misc/lv_mem.h"
+#include "lvgl/lv_misc/lv_ll.h"
+#include "lvgl/lv_misc/lv_mem.h"
 
 /*********************
  *      DEFINES

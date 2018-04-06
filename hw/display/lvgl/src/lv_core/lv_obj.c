@@ -6,17 +6,17 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_core/lv_obj.h"
-#include "lv_core/lv_indev.h"
-#include "lv_core/lv_refr.h"
-#include "lv_core/lv_group.h"
-#include "lv_themes/lv_theme.h"
-#include "lv_draw/lv_draw.h"
-#include "lv_draw/lv_draw_rbasic.h"
-#include "lv_misc/lv_anim.h"
-#include "lv_misc/lv_task.h"
-#include "lv_misc/lv_fs.h"
-#include "lv_misc/lv_ufs.h"
+#include "lvgl/lv_core/lv_obj.h"
+#include "lvgl/lv_core/lv_indev.h"
+#include "lvgl/lv_core/lv_refr.h"
+#include "lvgl/lv_core/lv_group.h"
+#include "lvgl/lv_themes/lv_theme.h"
+#include "lvgl/lv_draw/lv_draw.h"
+#include "lvgl/lv_draw/lv_draw_rbasic.h"
+#include "lvgl/lv_misc/lv_anim.h"
+#include "lvgl/lv_misc/lv_task.h"
+#include "lvgl/lv_misc/lv_fs.h"
+#include "lvgl/lv_misc/lv_ufs.h"
 #include <stdint.h>
 #include <string.h>
 

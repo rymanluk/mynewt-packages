@@ -6,14 +6,14 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_misc/lv_anim.h"
+#include "lvgl/lv_misc/lv_anim.h"
 
 #if USE_LV_ANIMATION
 #include <stddef.h>
 #include <string.h>
-#include "lv_hal/lv_hal_tick.h"
-#include "lv_misc/lv_task.h"
-#include "lv_misc/lv_math.h"
+#include "lvgl/lv_hal/lv_hal_tick.h"
+#include "lvgl/lv_misc/lv_task.h"
+#include "lvgl/lv_misc/lv_math.h"
 
 /*********************
  *      DEFINES

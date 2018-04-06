@@ -6,11 +6,11 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_conf.h"
+#include "lvgl/lv_conf.h"
 #if USE_LV_WIN != 0
 
-#include "lv_objx/lv_win.h"
-#include "lv_themes/lv_theme.h"
+#include "lvgl/lv_objx/lv_win.h"
+#include "lvgl/lv_themes/lv_theme.h"
 
 /*********************
  *      DEFINES

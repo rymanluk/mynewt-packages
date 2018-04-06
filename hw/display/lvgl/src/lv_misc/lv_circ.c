@@ -8,7 +8,7 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_misc/lv_area.h"
+#include "lvgl/lv_misc/lv_area.h"
 
 /*********************
  *      DEFINES

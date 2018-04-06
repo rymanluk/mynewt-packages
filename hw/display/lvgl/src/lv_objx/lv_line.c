@@ -6,12 +6,12 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_conf.h"
+#include "lvgl/lv_conf.h"
 
 #if USE_LV_LINE != 0
-#include "lv_objx/lv_line.h"
-#include "lv_draw/lv_draw.h"
-#include "lv_misc/lv_math.h"
+#include "lvgl/lv_objx/lv_line.h"
+#include "lvgl/lv_draw/lv_draw.h"
+#include "lvgl/lv_misc/lv_math.h"
 #include <stdbool.h>
 #include <stdint.h>
 #include <string.h>

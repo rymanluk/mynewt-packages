@@ -6,12 +6,12 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_conf.h"
+#include "lvgl/lv_conf.h"
 #if USE_LV_LED != 0
 
-#include "lv_objx/lv_led.h"
-#include "lv_themes/lv_theme.h"
-#include "lv_draw/lv_draw.h"
+#include "lvgl/lv_objx/lv_led.h"
+#include "lvgl/lv_themes/lv_theme.h"
+#include "lvgl/lv_draw/lv_draw.h"
 
 /*********************
  *      DEFINES

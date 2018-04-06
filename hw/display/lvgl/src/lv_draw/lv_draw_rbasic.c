@@ -6,12 +6,12 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_draw/lv_draw_rbasic.h"
+#include "lvgl/lv_draw/lv_draw_rbasic.h"
 #if USE_LV_REAL_DRAW != 0
 
-#include "lv_hal/lv_hal_disp.h"
-#include "lv_misc/lv_font.h"
-#include "lv_draw/lv_draw.h"
+#include "lvgl/lv_hal/lv_hal_disp.h"
+#include "lvgl/lv_misc/lv_font.h"
+#include "lvgl/lv_draw/lv_draw.h"
 
 /*********************
  *      DEFINES

@@ -7,8 +7,8 @@ require 'pathname'
 include FileUtils
 
 
-{ "src"     => [ "lv*/**/*.c" ],
-  "include" => [ "lv*/**/*.h", "lv*.h" ],
+{ "src"          => [ "lv*/**/*.c" ],
+  "include/lvgl" => [ "lv*/**/*.h", "lv*.h" ],
 }.each {|dir, globs|
     Dir[*globs].each {|f| f = Pathname(f)
         dst = "#{dir}/#{f.dirname}"
@@ -18,12 +18,12 @@ include FileUtils
 }
 
 Dir["**/*.[ch]"].each {|f|
-    dir = File.dirname(f).to_s.split('/')[1..-1].join('/')
+    dir = File.dirname(f).sub(/^(?:src|include\/lvgl)\//, '')
     dir = Pathname(dir)
     
     lines = File.readlines(f).map {|line|
         line.gsub(/(?<=^#include ")[^"]+(?=")/) {|inc|
-            (dir + Pathname(inc)).sub(/^\.\.\//, '')
+            Pathname('lvgl/') + (dir + Pathname(inc)).sub(/^\.\.\//, '')
         }
 
     }

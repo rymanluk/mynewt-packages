@@ -7,9 +7,9 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_conf.h"
-#include "lv_misc/lv_mem.h"
-#include "lv_misc/lv_math.h"
+#include "lvgl/lv_conf.h"
+#include "lvgl/lv_misc/lv_mem.h"
+#include "lvgl/lv_misc/lv_math.h"
 #include <string.h>
 
 #if LV_MEM_CUSTOM != 0

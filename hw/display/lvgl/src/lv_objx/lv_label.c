@@ -6,15 +6,15 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_conf.h"
+#include "lvgl/lv_conf.h"
 #if USE_LV_LABEL != 0
 
-#include "lv_objx/lv_label.h"
-#include "lv_core/lv_obj.h"
-#include "lv_core/lv_group.h"
-#include "lv_draw/lv_draw.h"
-#include "lv_misc/lv_color.h"
-#include "lv_misc/lv_math.h"
+#include "lvgl/lv_objx/lv_label.h"
+#include "lvgl/lv_core/lv_obj.h"
+#include "lvgl/lv_core/lv_group.h"
+#include "lvgl/lv_draw/lv_draw.h"
+#include "lvgl/lv_misc/lv_color.h"
+#include "lvgl/lv_misc/lv_math.h"
 
 /*********************
  *      DEFINES

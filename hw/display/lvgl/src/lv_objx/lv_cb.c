@@ -6,12 +6,12 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_conf.h"
+#include "lvgl/lv_conf.h"
 #if USE_LV_CB != 0
 
-#include "lv_objx/lv_cb.h"
-#include "lv_core/lv_group.h"
-#include "lv_themes/lv_theme.h"
+#include "lvgl/lv_objx/lv_cb.h"
+#include "lvgl/lv_core/lv_group.h"
+#include "lvgl/lv_themes/lv_theme.h"
 
 /*********************
  *      DEFINES

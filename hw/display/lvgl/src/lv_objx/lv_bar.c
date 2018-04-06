@@ -8,13 +8,13 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_conf.h"
+#include "lvgl/lv_conf.h"
 #if USE_LV_BAR != 0
 
-#include "lv_objx/lv_bar.h"
-#include "lv_draw/lv_draw.h"
-#include "lv_themes/lv_theme.h"
-#include "lv_misc/lv_anim.h"
+#include "lvgl/lv_objx/lv_bar.h"
+#include "lvgl/lv_draw/lv_draw.h"
+#include "lvgl/lv_themes/lv_theme.h"
+#include "lvgl/lv_misc/lv_anim.h"
 #include <stdio.h>
 
 /*********************

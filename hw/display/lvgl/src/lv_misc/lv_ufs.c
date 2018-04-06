@@ -7,10 +7,10 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_misc/lv_ufs.h"
+#include "lvgl/lv_misc/lv_ufs.h"
 #if USE_LV_FILESYSTEM
 
-#include "lv_misc/lv_ll.h"
+#include "lvgl/lv_misc/lv_ll.h"
 #include <string.h>
 #include <stdio.h>
 #include <errno.h>

@@ -8,8 +8,8 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_hal/lv_hal_indev.h"
-#include "lv_misc/lv_mem.h"
+#include "lvgl/lv_hal/lv_hal_indev.h"
+#include "lvgl/lv_misc/lv_mem.h"
 
 /*********************
  *      DEFINES

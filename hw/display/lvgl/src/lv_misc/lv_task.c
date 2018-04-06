@@ -8,9 +8,9 @@
  *      INCLUDES
  *********************/
 #include <stddef.h>
-#include "lv_misc/lv_task.h"
-#include "lv_hal/lv_hal_tick.h"
-#include "lv_conf.h"
+#include "lvgl/lv_misc/lv_task.h"
+#include "lvgl/lv_hal/lv_hal_tick.h"
+#include "lvgl/lv_conf.h"
 
 /*********************
  *      DEFINES

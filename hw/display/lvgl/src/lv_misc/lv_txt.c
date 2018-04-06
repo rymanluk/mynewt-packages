@@ -6,9 +6,9 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_misc/lv_txt.h"
-#include "lv_conf.h"
-#include "lv_misc/lv_math.h"
+#include "lvgl/lv_misc/lv_txt.h"
+#include "lvgl/lv_conf.h"
+#include "lvgl/lv_misc/lv_math.h"
 
 /*********************
  *      DEFINES

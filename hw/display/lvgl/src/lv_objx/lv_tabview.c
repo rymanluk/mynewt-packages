@@ -6,13 +6,13 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_conf.h"
+#include "lvgl/lv_conf.h"
 #if USE_LV_TABVIEW != 0
 
-#include "lv_objx/lv_tabview.h"
-#include "lv_objx/lv_btnm.h"
-#include "lv_themes/lv_theme.h"
-#include "lv_misc/lv_anim.h"
+#include "lvgl/lv_objx/lv_tabview.h"
+#include "lvgl/lv_objx/lv_btnm.h"
+#include "lvgl/lv_themes/lv_theme.h"
+#include "lvgl/lv_misc/lv_anim.h"
 
 /*********************
  *      DEFINES

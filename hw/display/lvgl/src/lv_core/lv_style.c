@@ -6,10 +6,10 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_conf.h"
-#include "lv_core/lv_style.h"
-#include "lv_core/lv_obj.h"
-#include "lv_misc/lv_mem.h"
+#include "lvgl/lv_conf.h"
+#include "lvgl/lv_core/lv_style.h"
+#include "lvgl/lv_core/lv_obj.h"
+#include "lvgl/lv_misc/lv_mem.h"
 
 /*********************
  *      DEFINES

@@ -13,10 +13,10 @@
 /*********************
  *      INCLUDES
  *********************/
-#include "lv_conf.h"
+#include "lvgl/lv_conf.h"
 #if USE_LV_TEMPL != 0
 
-#include "lv_objx/lv_templ.h"
+#include "lvgl/lv_objx/lv_templ.h"
 
 /*********************
  *      DEFINES
