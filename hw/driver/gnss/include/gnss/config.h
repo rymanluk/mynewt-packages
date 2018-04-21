@@ -1,0 +1,12 @@
+#ifndef _GNSS_CONFIG_H_
+#define _GNSS_CONFIG_H_
+
+#include <syscfg/syscfg.h>
+
+#define GNSS_EVENT_MAX MYNEWT_VAL(GNSS_EVENT_MAX)
+
+#ifdef MYNEWT_VAL_GNSS_USE_HALF_FLOAT
+#define GNSS_USE_HALF_FLOAT MYNEWT_VAL(GNSS_USE_HALF_FLOAT)
+#endif
+
+#endif

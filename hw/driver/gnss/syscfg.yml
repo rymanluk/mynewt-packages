@@ -5,3 +5,11 @@ syscfg.defs:
         description: >
             Suppport for: GGA - Global Positioning System Fix Data
         value: 1
+    GNSS_EVENT_MAX:
+        description: >
+            Maximum number of pending GNSS event.
+        value: 20
+    GNSS_USE_HALF_FLOAT:
+        description: >
+            Use half-flot instead of float.
+        value: 'ieee'

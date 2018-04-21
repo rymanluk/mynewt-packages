@@ -1,113 +1,65 @@
 #ifndef _GNSS_H_
 #define _GNSS_H_
 
-#include "nmea.h"
+#include <gnss/nmea.h>
+#include <gnss/os_types.h>
 
-#define GNSS_NMEA_SENTENCE_MAXBYTES  82  /* Including $ and <CR><LF> */
-#define GNSS_NMEA_PARSER_BUFSIZE 96
+#define GNSS_ERROR_NONE				0
+#define GNSS_ERROR_WRONG_BAUD_RATE		1
 
 
-
-#if GNSS_NMEA_PARSER_BUFSIZE < (GNSS_NMEA_SENTENCE_MAXBYTES + 1)
-# error "GNSS_NMEA_PARSER_BUFSIZE is too small"
-#endif
-
-#include <os/os.h>
+#define GNSS_DECODER_NMEA			1
 
 
 
-#define GNSS_ERROR_EVENT_WRONG_BAUD_RATE		1
+struct gnss_event;
+struct gnss_decoder;
+
+typedef struct gnss_event gnss_event_t;
+typedef struct gnss_decoder gnss_decoder_t;
 
 
-struct gnss_decoder_context;
+typedef void (*gnss_message_callback_t)(int type, uint8_t flags);
+
+typedef void (*gnss_error_callback_t)(gnss_decoder_t *ctx, uint8_t error);
 
 
 
 
-struct gnss;
-typedef struct gnss gnss_t;
 
-struct gnss {
+
+struct gnss_event {
+    gnss_os_event_t event;
     union {
-	struct {
-	    int dev;
-	    uint8_t addr;
-	} i2c;
-	struct {
-	    char *dev;
-	} uart;
+	struct gnss_nmea nmea;
     };
-    int wakeup_pin;
+};
+
+struct gnss_decoder {
+    int decoder;
     
-    struct {
-	uint16_t offset;
-	char     buffer[GNSS_NMEA_PARSER_BUFSIZE];
-    } parser;
+    unsigned int error;
+    gnss_os_event_t error_event;
+    gnss_error_callback_t error_callback;
 
-    struct {
-	bool (*read     )(gnss_t *g, char *buffer, uint16_t buflen);
-	bool (*write    )(gnss_t *g, char *buffer, uint16_t buflen);
-	void (*configure)(gnss_t *g);
-	bool (*standby  )(gnss_t *g);
-	bool (*wakeup   )(gnss_t *g);
-    } op;
-};
-
-
-
-
-void gnss_init(gnss_t *g);
-void gnss_send_cmd(gnss_t *g, char *cmd);
-char *gnss_fetch_nmea(gnss_t *g);
-
-bool gnss_fetch_nmea_sentence(gnss_t *g, char **data, char **crc);
-
-
-
-
-static inline void
-gnss_flush(gnss_t *g)
-{
-    while(gnss_fetch_nmea_sentence(g, NULL, NULL)) {
-	// no-op
-    }
-}
-
-
-
-static inline bool
-gnss_standby(gnss_t *g)
-{
-    return g->op.standby && g->op.standby(g);
-}
-
-static inline bool
-gnss_wakeup(gnss_t *g)
-{
-    return g->op.wakeup && g->op.wakeup(g);
-}
-
-extern struct os_mempool gnss_pool;
-
-				 
-
-struct gnss_decoder_context {
-    uint8_t error_event_pending: 1;
-    struct os_event error_event;
+    struct gnss_event *gnss_event;
+    gnss_message_callback_t message_callback;
+    
     union {
-	struct gnss_nmea_decoder_context nmea;
+	struct gnss_nmea_decoder nmea;
     };
 };
 
 
-bool gnss_decoder(struct gnss_decoder_context *ctx, uint8_t byte);
 
 
+bool gnss_decoder(gnss_decoder_t *ctx, uint8_t byte);
 
-bool gnss_nmea_decoder(struct gnss_decoder_context *ctx, uint8_t byte);
+bool gnss_nmea_decoder(gnss_decoder_t *ctx, uint8_t byte);
 
-bool gnss_nmea_decoder_gga(struct gnss_nmea_gga *gga, char *field, int fid);
-void gnss_nmea_dump_gga(struct gnss_nmea_gga *gga);
 
+void gnss_init(void);
+
+void gnss_decoder_init(gnss_decoder_t *ctx, int decoder);
 
 #endif

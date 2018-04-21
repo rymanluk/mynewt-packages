@@ -1,17 +1,38 @@
 #include <stdbool.h>
+#include <string.h>
 #include <gnss/gnss.h>
+#include <gnss/mynewt.h>
 
 
 bool
-gnss_decoder(struct gnss_decoder_context *ctx, uint8_t byte)
+gnss_decoder(gnss_decoder_t *ctx, uint8_t byte)
 {
     /* Dont process if we've got an error event pending
      *  => usually means baud rate need to be fixed
      */
-    if (ctx->error_event_pending) {
+    if (ctx->error) {
 	return false; /* Stop reception */
     }    
 
-    return gnss_nmea_decoder(ctx, byte);
+    switch(ctx->decoder) {
+    case GNSS_DECODER_NMEA:
+	return gnss_nmea_decoder(ctx, byte);
+    default:
+	assert(0);
+	return false;
+    }
+}
 
+void
+gnss_init(void)
+{
+    gnss_os_init();
+}
+
+void
+gnss_decoder_init(gnss_decoder_t *ctx, int decoder)
+{
+    memset(ctx, 0, sizeof(*ctx));
+    ctx->decoder = decoder;
+    gnss_os_decoder_init(ctx);
 }
