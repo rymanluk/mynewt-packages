@@ -1,0 +1,7 @@
+# Package: hw/driver/gnss
+
+syscfg.defs:
+    GNSS_NMEA_GGA:
+        description: >
+            Suppport for: GGA - Global Positioning System Fix Data
+        value: 1
