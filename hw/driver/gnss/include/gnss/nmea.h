@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 #include <stdbool.h>
-#include <os/os.h>
 #include <gnss/types.h>
 
 
@@ -165,7 +164,7 @@ struct gnss_nmea_vtg {
  */
 typedef struct gnss_nmea {
     uint16_t talker;
-    uint16_t option;
+    uint16_t sentence;
     union {
 	struct gnss_nmea_rmc rmc;
 	struct gnss_nmea_gga gga;
@@ -183,12 +182,12 @@ typedef struct gnss_nmea {
 
 
 
-typedef bool (*gnss_nmea_sentence_decoder_t)(struct gnss_nmea_gga *, char *field, int fid);
+typedef bool (*gnss_nmea_field_decoder_t)(void *, char *field, int fid);
 
 
 
 struct gnss_nmea_decoder {
-    gnss_nmea_sentence_decoder_t decoder;
+    gnss_nmea_field_decoder_t field_decoder;
     uint8_t state;
     uint8_t binaries;
     uint8_t crc;
@@ -216,7 +215,9 @@ bool gnss_nmea_field_parse_time(const char *str, gnss_time_t *val);
 bool gnss_nmea_field_parse_crc(const char *str, uint8_t *val);
 
 bool gnss_nmea_decoder_gga(struct gnss_nmea_gga *gga, char *field, int fid);
+bool gnss_nmea_decoder_rmc(struct gnss_nmea_rmc *rcm, char *field, int fid);
 void gnss_nmea_dump_gga(struct gnss_nmea_gga *gga);
+void gnss_nmea_dump_rmc(struct gnss_nmea_rmc *rmc);
 
 
 #endif

@@ -1,6 +1,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <gnss/gnss.h>
+
 #include <gnss/mynewt.h>
 
 
@@ -30,9 +31,13 @@ gnss_init(void)
 }
 
 void
-gnss_decoder_init(gnss_decoder_t *ctx, int decoder)
+gnss_decoder_init(gnss_decoder_t *ctx, int decoder,
+		  gnss_callback_t callback,
+		  gnss_error_callback_t error_callback)
 {
     memset(ctx, 0, sizeof(*ctx));
     ctx->decoder = decoder;
+    ctx->callback = callback;
+    ctx->error_callback = error_callback;
     gnss_os_decoder_init(ctx);
 }

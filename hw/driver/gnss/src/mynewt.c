@@ -12,25 +12,22 @@ static os_membuf_t gnss_memory_buffer[
 
 
 static void
-gnss_message_event_cb(struct os_event *ev)
+gnss_os_gnss_event_cb(struct os_event *ev)
 {
-    gnss_event_t *gnss_event = (gnss_event_t *) ev;
-    // yolo
-    (void)gnss_event;
-    gnss_nmea_dump_gga(&gnss_event->nmea.gga);
+    gnss_event_t   *gnss_event = (gnss_event_t   *) ev;
+    gnss_decoder_t *ctx        = (gnss_decoder_t *) ev->ev_arg;
 
-    
-    //gnss_decoder_context.nmea_event = &nev;
+    ctx->callback(ctx->decoder, gnss_event);
     
     os_memblock_put(&gnss_pool, ev);
 }
 
 static void
-gnss_error_event_cb(struct os_event *ev)
+gnss_os_error_event_cb(struct os_event *ev)
 {
-    unsigned int code = (unsigned int) ev->ev_arg;
-    (void)code;
-
+    gnss_decoder_t *ctx = (gnss_decoder_t *) ev;
+    ctx->error_callback(ctx, ctx->error);
+    ctx->error = GNSS_ERROR_NONE;
 }
 
 
@@ -49,7 +46,8 @@ gnss_os_init(void)
 void
 gnss_os_decoder_init(gnss_decoder_t *ctx)
 {
-    ctx->error_event.ev_cb = gnss_error_event_cb;
+    ctx->error_event.ev_cb  = gnss_os_error_event_cb;
+    ctx->error_event.ev_arg = ctx;
 }
 
 void
@@ -61,7 +59,6 @@ gnss_internal_evq_set(struct os_eventq *evq)
 void
 gnss_os_emit_error_event(gnss_decoder_t *ctx, unsigned int error)
 {
-    ctx->error_event.ev_arg = (void *)error;
     os_eventq_put(_gnss_internal_evq, &ctx->error_event);
 }
 
@@ -73,12 +70,12 @@ gnss_os_emit_gnss_event(gnss_decoder_t *ctx)
 
 
 gnss_event_t *
-gnss_os_gnss_event_alloc(gnss_decoder_t *ctx)
+gnss_os_fetch_gnss_event(gnss_decoder_t *ctx)
 {
     gnss_event_t *evt = os_memblock_get(&gnss_pool);
     evt->event = (struct os_event) {
-	.ev_cb  = gnss_message_event_cb,
-	.ev_arg = &ctx->gnss_event->nmea,
+	.ev_cb  = gnss_os_gnss_event_cb,
+	.ev_arg = ctx,
     };
     return evt;
 }

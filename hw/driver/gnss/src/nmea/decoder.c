@@ -11,44 +11,48 @@
 
 
 
-static gnss_nmea_sentence_decoder_t
-gnss_nmea_get_decoder(const char *tag, uint16_t *talkerid, uint16_t *option)
+static gnss_nmea_field_decoder_t
+gnss_nmea_get_field_decoder(const char *tag,
+			   uint16_t *talker, uint16_t *sentence)
 {
-    gnss_nmea_sentence_decoder_t decoder = NULL;
+    gnss_nmea_field_decoder_t field_decoder = NULL;
 
     if (!strncmp(tag, "PMTK", 4)) {
-	if (talkerid) {
-	    *talkerid = GNSS_NMEA_TALKER_PMTK;
+	if (talker) {
+	    *talker = GNSS_NMEA_TALKER_PMTK;
 	}
-	if (option) {
-	    *option = strtoul(&tag[4], NULL, 10);
+	if (sentence) {
+	    *sentence = strtoul(&tag[4], NULL, 10);
 	}
 	// gns_decode_pmtk
 
     } else if (!strcmp(tag, "PBUX")) {
-	if (talkerid) {
-	    *talkerid = GNSS_NMEA_TALKER_PBUX;
+	if (talker) {
+	    *talker = GNSS_NMEA_TALKER_PBUX;
 	}
-	if (option) {
-	    *option = 0;
+	if (sentence) {
+	    *sentence = 0;
 	}
 	// gns_decode_pbux
 
     }  else if (strlen(tag) == 5) {
-	if (talkerid) {
+	if (talker) {
 	    char str[3] = { tag[0], tag[1], 0 };
-	    *talkerid = strtoul(str, NULL, 16);
+	    *talker = (uint16_t)strtoul(str, NULL, 36);
 	}
-	if (option) {
-	    *option = strtoul(&tag[2], NULL, 16);
+	if (sentence) {
+	    *sentence = (uint16_t)strtoul(&tag[2], NULL, 36);
 	}
 
-	if (!strcmp(&tag[2], "GGA")) {
-	    decoder = gnss_nmea_decoder_gga;
+	if        (!strcmp(&tag[2], "GGA")) {
+	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_gga;
+	} else if (!strcmp(&tag[2], "RMC")) {
+	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_rmc;
 	}
+
     }
     
-    return decoder;
+    return field_decoder;
 }
 
 
@@ -57,7 +61,7 @@ gnss_nmea_get_decoder(const char *tag, uint16_t *talkerid, uint16_t *option)
 static bool
 gnss_decode_nmea_field(gnss_decoder_t *ctx)
 {
-    struct gnss_nmea_decoder *nctx = &ctx->nmea;
+    struct gnss_nmea_decoder * const nctx = &ctx->nmea;
 
     /* Check that we are in the main part */
     /*  (ie: started but no crc, no <cr>) */
@@ -73,18 +77,20 @@ gnss_decode_nmea_field(gnss_decoder_t *ctx)
     /* Special handling for NMEA tag (field id == 0)  */
     /*  we need to get the dedicated decoder          */
     if (nctx->fid == 0) {
-	nctx->decoder = gnss_nmea_get_decoder(nctx->buffer,
-					      &ctx->gnss_event->nmea.talker,
-					      &ctx->gnss_event->nmea.option);
+	nctx->field_decoder =
+	    gnss_nmea_get_field_decoder(nctx->buffer,
+					&ctx->gnss_event->nmea.talker,
+					&ctx->gnss_event->nmea.sentence);
 	/* If we don't have a decoder, just trash everything */
-	if (nctx->decoder == NULL) {
+	if (nctx->field_decoder == NULL) {
 	    nctx->stats.no_decoder++;
 	    return false;
 	}
 	
     /* Decode NMEA field (field id >= 1) */
     } else {
-	if (!nctx->decoder(&ctx->gnss_event->nmea.gga, nctx->buffer, nctx->fid)) {
+	if (!nctx->field_decoder(&ctx->gnss_event->nmea.gga,
+				 nctx->buffer, nctx->fid)) {
 	    console_out('-');
 	    nctx->stats.parsing_error++;
 	    return false;
@@ -108,7 +114,7 @@ gnss_nmea_decoder(gnss_decoder_t *ctx, uint8_t byte)
     case '$':
 	/* Check if we need to allocate an nmea event */
 	if (ctx->gnss_event == NULL) {
-	    ctx->gnss_event = gnss_os_gnss_event_alloc(ctx);
+	    ctx->gnss_event = gnss_os_fetch_gnss_event(ctx);
 	    if (ctx->gnss_event == NULL) {
 		nctx->stats.allocation_error++;
 		goto trash_it;
