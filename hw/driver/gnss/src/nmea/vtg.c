@@ -5,16 +5,10 @@ void
 gnss_nmea_log_vtg(struct gnss_nmea_vtg *vtg)
 {
     LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-	     "VTG: True track = %f\n", vtg->true_track);
-    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-	     "VTG: Magn track = %f\n", vtg->magnetic_track);
-    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-	     "VTG: Speed      = %f m/s\n", vtg->speed);
-    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-	     "VTG: FAA mode   = %c\n", vtg->faa_mode);
+	     "VTG: Track = %f°[T] | %f°[M], Speed = %f m/s, FAA = %c\n",
+	     vtg->true_track, vtg->magnetic_track,
+	     vtg->speed, vtg->faa_mode);
 }
-
-
 
 bool
 gnss_nmea_decoder_vtg(struct gnss_nmea_vtg *vtg, char *field, int fid) {

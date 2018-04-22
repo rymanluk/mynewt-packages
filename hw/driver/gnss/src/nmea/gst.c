@@ -6,26 +6,18 @@ gnss_nmea_log_gst(struct gnss_nmea_gst *gst)
 {
     if (gst->time.present) {
 	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "GST: Time       = %2d:%02d:%02d.%03d\n",
+		 "GST: Time = %2d:%02d:%02d.%03d, RMS = %f, SM = %f (%f°), Sm = %f, Lat = %f, Lng = %f, Alt = %f\n",
 		 gst->time.hours,
 		 gst->time.minutes,
 		 gst->time.seconds,
-		 gst->time.microseconds / 1000);
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "GST: RMS        = %f\n", gst->rms_stddev);
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "GST: S. major   = %f\n", gst->semi_major_stddev);
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "GST: S. minor   = %f\n", gst->semi_minor_stddev);
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "GST: S. major or= %f\n", gst->semi_major_orientation);
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "GST: Latitude   = %f\n", gst->latitude_stddev);
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "GST: Longitude  = %f\n", gst->longitude_stddev);
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "GST: Altitude   = %f\n", gst->altitude_stddev);
-
+		 gst->time.microseconds / 1000,
+		 gst->rms_stddev,
+		 gst->semi_major_stddev,
+		 gst->semi_major_orientation,
+		 gst->semi_minor_stddev,
+		 gst->latitude_stddev,
+		 gst->longitude_stddev,
+		 gst->altitude_stddev);
     } else {
 	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
 		 "GST: <no valid output>\n");
