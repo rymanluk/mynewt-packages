@@ -2,13 +2,20 @@
 #define _GNSS_H_
 
 #include <gnss/nmea.h>
+#include <gnss/mediatek.h>
 #include <gnss/os_types.h>
+
 
 #define GNSS_ERROR_NONE				0
 #define GNSS_ERROR_WRONG_BAUD_RATE		1
 
 
 #define GNSS_DECODER_NMEA			1
+
+
+int gnss_uart_rx_char(void *arg, uint8_t byte);
+int gnss_uart_tx_char(void *arg);
+void gnss_uart_tx_done(void *arg);
 
 
 
@@ -24,7 +31,16 @@ typedef void (*gnss_callback_t)(int type, gnss_event_t *event);
 typedef void (*gnss_error_callback_t)(gnss_decoder_t *ctx, int error);
 
 
+bool gnss_send_cmd(gnss_decoder_t *ctx, char *cmd);
 
+static inline uint8_t
+gnss_nmea_crc(char *str) {
+   uint8_t crc = 0;
+   for ( ; *str ; str++) {
+       crc ^= *str;
+   }
+   return crc;
+}
 
 
 
@@ -36,6 +52,11 @@ struct gnss_event {
 };
 
 struct gnss_decoder {
+    char *tx_string;
+    struct os_sem tx_sem;
+    struct uart_dev *uart_dev;
+
+    
     int decoder;
     
     int error;

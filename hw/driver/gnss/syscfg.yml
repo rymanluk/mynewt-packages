@@ -1,6 +1,18 @@
 # Package: hw/driver/gnss
 
 syscfg.defs:
+    GNSS_USE_MEDIATEK:
+        description: >
+            Suppport for MeditaTeK 
+        value: 1
+    GNSS_NMEA_USE_PGACK:
+        description: >
+            Suppport for MeditaTeK PGACK sentence
+        value: 1
+    GNSS_NMEA_USE_PMTK:
+        description: >
+            Suppport for MeditaTeK PMTK sentence
+        value: 1
     GNSS_NMEA_USE_RMC:
         description: >
             Suppport for: RMC - Recommended Minimum Navigation Information

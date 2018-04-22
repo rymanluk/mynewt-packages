@@ -4,7 +4,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <gnss/types.h>
-
+#include <gnss/mediatek.h>
 
 /*
  * See: http://www.catb.org/gpsd/NMEA.html
@@ -19,39 +19,41 @@
 
 
 
-
-#define GNSS_NMEA_SENTENCE_MAXBYTES  82  
+/**
+ * NMEA max sentence size (including '$', <CR>, <LF>)
+ */
+#define GNSS_NMEA_SENTENCE_MAXBYTES  		       82
 
 /**
  * Fix type
  */
-#define GNNS_NMEA_FIX_NOT_AVAILABLE			0
-#define GNNS_NMEA_FIX_GPS				1
-#define GNNS_NMEA_FIX_DIFFERENTIAL_GPS			2
-#define GNNS_NMEA_FIX_PPS				3
-#define GNNS_NMEA_FIX_REAL_TIME_KINEMATIC		4
-#define GNNS_NMEA_FIX_FLOAT_RTK				5
-#define GNNS_NMEA_FIX_DEAD_RECKONING			6
-#define GNNS_NMEA_FIX_MANUAL_INPUT			7
-#define GNNS_NMEA_FIX_SIMULATION			8
+#define GNNS_NMEA_FIX_TYPE_NOT_AVAILABLE		0
+#define GNNS_NMEA_FIX_TYPE_GPS				1
+#define GNNS_NMEA_FIX_TYPE_DIFFERENTIAL_GPS		2
+#define GNNS_NMEA_FIX_TYPE_PPS				3
+#define GNNS_NMEA_FIX_TYPE_REAL_TIME_KINEMATIC		4
+#define GNNS_NMEA_FIX_TYPE_FLOAT_RTK			5
+#define GNNS_NMEA_FIX_TYPE_DEAD_RECKONING		6
+#define GNNS_NMEA_FIX_TYPE_MANUAL_INPUT			7
+#define GNNS_NMEA_FIX_TYPE_SIMULATION			8
 
 /**
  * FAA modes
  */
-#define GNNS_NMEA_FAA_AUTONOMOUS		      'A'
-#define GNNS_NMEA_FAA_DIFFERENTIAL		      'D'
-#define GNSS_NMEA_FAA_DEAD_RECKONING		      'E'
-#define GNSS_NMEA_FAA_MANUAL			      'M'
-#define GNSS_NMEA_FAA_SIMULATED			      'S'
-#define GNSS_NMEA_FAA_NOT_VALID			      'N'
-#define GNSS_NMEA_FAA_PRECISE			      'P'
+#define GNNS_NMEA_FAA_MODE_AUTONOMOUS		      'A'
+#define GNNS_NMEA_FAA_MODE_DIFFERENTIAL		      'D'
+#define GNSS_NMEA_FAA_MODE_DEAD_RECKONING	      'E'
+#define GNSS_NMEA_FAA_MODE_MANUAL		      'M'
+#define GNSS_NMEA_FAA_MODE_SIMULATED		      'S'
+#define GNSS_NMEA_FAA_MODE_NOT_VALID		      'N'
+#define GNSS_NMEA_FAA_MODE_PRECISE		      'P'
 
 /**
- * GSA mode
+ * Fix mode
  */
-#define GNSS_NMEA_GSA_NO_FIX			        1
-#define GNSS_NMEA_GSA_2D_FIX			        2
-#define GNSS_NMEA_GSA_3D_FIX			        3
+#define GNSS_NMEA_FIX_MODE_NO			        1
+#define GNSS_NMEA_FIX_MODE_2D		       	        2
+#define GNSS_NMEA_FIX_MODE_3D			        3
 
 /**
  * Talker Id
@@ -63,9 +65,8 @@
 #define GNSS_NMEA_TALKER_GB  			      587
 #define GNSS_NMEA_TALKER_BD  			      409
 #define GNSS_NMEA_TALKER_QZ  			      971
-#define GNSS_NMEA_TALKER_PBUX			    65011
-#define GNSS_NMEA_TALKER_PMTK			    65021
-#define GNSS_NMEA_TALKER_PGACK			    65022
+#define GNSS_NMEA_TALKER_UBLOX			    65001
+#define GNSS_NMEA_TALKER_MTK			    65002
 
 /**
  * Sentence type
@@ -113,8 +114,8 @@ struct gnss_nmea_gsa {
     gnss_float_t hdop;			/**< HDOP			   */
     gnss_float_t vdop;			/**< VDOP			   */
     uint8_t      sid[12];		/**< List of satelittes id	   */
-    uint8_t      mode;			/**< Mode			   */
-    uint8_t      fix_type;		/**< Fix type			   */
+    char         fix_mode_selection;	/**< Mode selection		   */
+    uint8_t      fix_mode;		/**< Fix mode			   */
 };
 
 /**
@@ -166,38 +167,47 @@ struct gnss_nmea_vtg {
     char         faa_mode;		/**< FAA mode			   */
 };
 
-/**
- * NMEA message
- */
 
+/**
+ * NMEA message data
+ */
 union gnss_nmea_data {
-#ifdef GNSS_NMEA_USE_GGA
-	struct gnss_nmea_gga gga;
+#if MYNEWT_VAL(GNSS_NMEA_USE_PGACK) > 0
+    struct gnss_nmea_pgack pgack;
 #endif
-#ifdef GNSS_NMEA_USE_GLL
-	struct gnss_nmea_gll gll;
+#if MYNEWT_VAL(GNSS_NMEA_USE_PMTK) > 0
+    struct gnss_nmea_pmtk pmtk;
 #endif
-#ifdef GNSS_NMEA_USE_GSA
-	struct gnss_nmea_gsa gsa;
+#if MYNEWT_VAL(GNSS_NMEA_USE_GGA) > 0
+    struct gnss_nmea_gga gga;
 #endif
-#ifdef GNSS_NMEA_USE_GST
-	struct gnss_nmea_gst gst;
+#if MYNEWT_VAL(GNSS_NMEA_USE_GLL) > 0
+    struct gnss_nmea_gll gll;
 #endif
-#ifdef GNSS_NMEA_USE_GSV
-	struct gnss_nmea_gsv gsv;
+#if MYNEWT_VAL(GNSS_NMEA_USE_GSA) > 0
+    struct gnss_nmea_gsa gsa;
 #endif
-#ifdef GNSS_NMEA_USE_RMC
-	struct gnss_nmea_rmc rmc;
+#if MYNEWT_VAL(GNSS_NMEA_USE_GST) > 0
+    struct gnss_nmea_gst gst;
 #endif
-#ifdef GNSS_NMEA_USE_VTG
-	struct gnss_nmea_vtg vtg;
+#if MYNEWT_VAL(GNSS_NMEA_USE_GSV) > 0
+    struct gnss_nmea_gsv gsv;
+#endif
+#if MYNEWT_VAL(GNSS_NMEA_USE_RMC) > 0
+    struct gnss_nmea_rmc rmc;
+#endif
+#if MYNEWT_VAL(GNSS_NMEA_USE_VTG) > 0
+    struct gnss_nmea_vtg vtg;
 #endif
 };
 
+/**
+ * NMEA meassage
+ */
 typedef struct gnss_nmea {
-    uint16_t talker;
-    uint16_t sentence;
-    union gnss_nmea_data data;
+    uint16_t talker;			/**< Talker Id 		*/
+    uint16_t sentence;			/**< Sentence code 	*/
+    union gnss_nmea_data data;		/**< Date		*/
 } gnss_nmea_t;
 
 
@@ -238,47 +248,50 @@ bool gnss_nmea_field_parse_date(const char *str, gnss_date_t *val);
 bool gnss_nmea_field_parse_time(const char *str, gnss_time_t *val);
 bool gnss_nmea_field_parse_crc(const char *str, uint8_t *val);
 
-#ifdef GNSS_NMEA_USE_GGA
+
+#if MYNEWT_VAL(GNSS_NMEA_USE_GGA) > 0
 bool gnss_nmea_decoder_gga(struct gnss_nmea_gga *gga, char *field, int fid);
 #endif
-#ifdef GNSS_NMEA_USE_GLL
+#if MYNEWT_VAL(GNSS_NMEA_USE_GLL) > 0
 bool gnss_nmea_decoder_gll(struct gnss_nmea_gll *gll, char *field, int fid);
 #endif
-#ifdef GNSS_NMEA_USE_GSA
+#if MYNEWT_VAL(GNSS_NMEA_USE_GSA) > 0
 bool gnss_nmea_decoder_gsa(struct gnss_nmea_gsa *gsa, char *field, int fid);
 #endif
-#ifdef GNSS_NMEA_USE_GST
+#if MYNEWT_VAL(GNSS_NMEA_USE_GST) > 0
 bool gnss_nmea_decoder_gst(struct gnss_nmea_gst *gst, char *field, int fid);
 #endif
-#ifdef GNSS_NMEA_USE_GSV
+#if MYNEWT_VAL(GNSS_NMEA_USE_GSV) > 0
 bool gnss_nmea_decoder_gsv(struct gnss_nmea_gsv *gsv, char *field, int fid);
 #endif
-#ifdef GNSS_NMEA_USE_RMC
+#if MYNEWT_VAL(GNSS_NMEA_USE_RMC) > 0
 bool gnss_nmea_decoder_rmc(struct gnss_nmea_rmc *rmc, char *field, int fid);
 #endif
-#ifdef GNSS_NMEA_USE_VTG
+#if MYNEWT_VAL(GNSS_NMEA_USE_VTG) > 0
 bool gnss_nmea_decoder_vtg(struct gnss_nmea_vtg *vtg, char *field, int fid);
 #endif
 
-#ifdef GNSS_NMEA_USE_GGA
+
+
+#if MYNEWT_VAL(GNSS_NMEA_USE_GGA) > 0
 void gnss_nmea_dump_gga(struct gnss_nmea_gga *gga);
 #endif
-#ifdef GNSS_NMEA_USE_GLL
+#if MYNEWT_VAL(GNSS_NMEA_USE_GLL) > 0
 void gnss_nmea_dump_gll(struct gnss_nmea_gll *gll);
 #endif
-#ifdef GNSS_NMEA_USE_GSA
+#if MYNEWT_VAL(GNSS_NMEA_USE_GSA) > 0
 void gnss_nmea_dump_gsa(struct gnss_nmea_gsa *gsa);
 #endif
-#ifdef GNSS_NMEA_USE_GST
+#if MYNEWT_VAL(GNSS_NMEA_USE_GST) > 0
 void gnss_nmea_dump_gst(struct gnss_nmea_gst *gst);
 #endif
-#ifdef GNSS_NMEA_USE_GSV
+#if MYNEWT_VAL(GNSS_NMEA_USE_GSV) > 0
 void gnss_nmea_dump_gsv(struct gnss_nmea_gsv *gsv);
 #endif
-#ifdef GNSS_NMEA_USE_RMC
+#if MYNEWT_VAL(GNSS_NMEA_USE_RMC) > 0
 void gnss_nmea_dump_rmc(struct gnss_nmea_rmc *rmc);
 #endif
-#ifdef GNSS_NMEA_USE_VTG
+#if MYNEWT_VAL(GNSS_NMEA_USE_VTG) > 0
 void gnss_nmea_dump_vtg(struct gnss_nmea_vtg *vtg);
 #endif
 

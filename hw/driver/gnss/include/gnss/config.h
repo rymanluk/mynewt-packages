@@ -38,6 +38,11 @@
 #endif
 
 
+#if MYNEWT_VAL(GNSS_NMEA_USE_MEDIATEK) > 0
+#define GNSS_NMEA_USE_MEDIATEK
+#endif
+
+
 #define GNSS_NMEA_YEAR_OFFSET 2000
 
 

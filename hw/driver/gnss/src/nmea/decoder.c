@@ -62,11 +62,19 @@ gnss_nmea_get_field_decoder(const char *tag,
 	    break;
 #endif
 	}
+    }
 
-    /* Proprietary tags */
-    } else if (!strncmp(tag, "PMTK", 4)) {
-	t_id = GNSS_NMEA_TALKER_PMTK;
-	s_id = strtoul(&tag[4], NULL, 10);	
+    if (field_decoder == NULL) {
+	if (!strcmp(tag, "PGACK")) {
+	    t_id = GNSS_NMEA_TALKER_MTK;
+	    s_id = GNSS_NMEA_SENTENCE_PGACK;
+	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_pgack;
+	}
+	if (!strncmp(tag, "PMTK", 4)) {
+	    t_id = GNSS_NMEA_TALKER_MTK;
+	    s_id = GNSS_NMEA_SENTENCE_PMTK;
+	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_pmtk;
+	}
     }
     
     if (field_decoder != NULL) {
@@ -89,19 +97,22 @@ gnss_decode_nmea_field(gnss_decoder_t *ctx)
 {
     struct gnss_nmea_decoder * const nctx = &ctx->nmea;
 
-    /* Check that we are in the main part */
-    /*  (ie: started but no crc, no <cr>) */
+    /* Check that we are in the main part 
+     * (ie: started but no crc, no <cr>)
+     */
     if (nctx->state != GNSS_STATE_FLG_STARTED) {
 	nctx->stats.parsing_error++;
 	return false;
     }
     
-    /* Make it a NUL terminated string,               */
-    /*  we kept 1 byte in the buffer for that purpose */
+    /* Make it a NUL terminated string,
+     *  we kept 1 byte in the buffer for that purpose
+     */
     nctx->buffer[nctx->bufcnt] = '\0';
 
-    /* Special handling for NMEA tag (field id == 0)  */
-    /*  we need to get the dedicated decoder          */
+    /* Special handling for NMEA tag (field id == 0)
+     *  we need to get the dedicated decoder
+     */
     if (nctx->fid == 0) {
 	nctx->field_decoder =
 	    gnss_nmea_get_field_decoder(nctx->buffer,
@@ -112,17 +123,21 @@ gnss_decode_nmea_field(gnss_decoder_t *ctx)
 	    nctx->stats.no_decoder++;
 	    return false;
 	}
-	
-    /* Decode NMEA field (field id >= 1) */
+    }
+
+    /* Decoder is called
+     *  - we don't need to check for field_decoder == NULL
+     *    as when returning false the whole sentence is trashed
+     *  - we are calling decoder for field 0 (ie: tag), which seems
+     *    unecessary but is required for proprietary tag (ex: PMTK001)
+     */
+    if (!nctx->field_decoder(&ctx->gnss_event->nmea.data,
+			     nctx->buffer, nctx->fid)) {
+	//console_out('-');
+	nctx->stats.parsing_error++;
+	return false;
     } else {
-	if (!nctx->field_decoder(&ctx->gnss_event->nmea.data,
-				 nctx->buffer, nctx->fid)) {
-	    //console_out('-');
-	    nctx->stats.parsing_error++;
-	    return false;
-	} else {
-	    //console_out('*');
-	}
+	//console_out('*');
     }
 
     return true;
