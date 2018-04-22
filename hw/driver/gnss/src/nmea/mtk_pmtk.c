@@ -1,22 +1,51 @@
 #include <string.h>
 #include <gnss/gnss.h>
+#include <gnss/mediatek.h>
 #include <log/log.h>
 
 void
 gnss_nmea_log_pmtk(struct gnss_nmea_pmtk *pmtk)
 {
-
+    char *status = "???";
+    
     switch(pmtk->type) {
     case GNSS_NMEA_PMTK_TYPE_ACK:
+	switch(pmtk->ack.status) {
+	case GNSS_NMEA_PMTK_ACK_INVALID_COMMAND:
+	    status = "Invalid";
+	    break;
+	case GNSS_NMEA_PMTK_ACK_UNSUPPORTED_COMMAND:
+	    status = "Unsupported";
+	    break;
+	case GNSS_NMEA_PMTK_ACK_ACTION_FAILED:
+	    status = "Failed";
+	    break;
+	case GNSS_NMEA_PMTK_ACK_ACTION_SUCCESSFUL:
+	    status  = "Successful";
+	    break;
+	}
 	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "PMTK[ACK]: Cmd = %d, Status = %d\n",
-		 pmtk->ack.cmd, pmtk->ack.status);
+		 "PMTK[ACK]: Cmd = %d, Status = %s\n",
+		 pmtk->ack.cmd, status);
 	break;
 
     case GNSS_NMEA_PMTK_TYPE_SYS_MSG:
+	switch(pmtk->sys_msg) {
+	case GNSS_NMEA_PMTK_SYS_MSG_UNKNOWN:
+	    status = "Unknown";
+	    break;
+	case GNSS_NMEA_PMTK_SYS_MSG_STARTUP:
+	    status = "Startup";
+	    break;
+	case GNSS_NMEA_PMTK_SYS_MSG_EPO:
+	    status = "EPO";
+	    break;
+	case GNSS_NMEA_PMTK_SYS_MSG_NORMAL:
+	    status  = "Normal";
+	    break;
+	}	    
 	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "PMTK[SYS_MSG]: Status = %d\n",
-		 pmtk->sys_msg);
+		 "PMTK[SYS_MSG]: Status = %s\n", status);
 	break;
 
     case GNSS_NMEA_PMTK_TYPE_TXT_MSG:
