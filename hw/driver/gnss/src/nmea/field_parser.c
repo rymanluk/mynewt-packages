@@ -2,6 +2,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <gnss/nmea.h>
+#include <gnss/config.h>
 
 bool
 gnss_nmea_field_parse_char(const char *str, char *val)
@@ -70,7 +71,7 @@ gnss_nmea_field_parse_date(const char *str, gnss_date_t *val)
     char *eob;
     gnss_date_t v = { .present = *str != '\0' };
     unsigned long n = strtoul(str, &eob, 10);
-    if (val) { v.year    =  n % 100;
+    if (val) { v.year    = (n % 100) + GNSS_NMEA_YEAR_OFFSET;
 	       v.month   = (n / 100) % 100;
 	       v.day     =  n / 10000;
 	       *val = v; }

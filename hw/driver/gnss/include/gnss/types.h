@@ -25,7 +25,7 @@ typedef struct gnss_time {
 } gnss_time_t;
 
 typedef struct gnss_sat_info {
-    uint32_t id           :  8;	    /**< Satellit PRN number             */
+    uint32_t prn          :  8;	    /**< Satellit PRN number             */
     uint32_t elevation    :  7;	    /**< Eleveation (degrees) (0-90)     */
     uint32_t azimuth      :  9;	    /**< Azimuth (True North degrees) (0-359) */
     uint32_t snr          :  7;     /**< SNR (dB) (0-99)                 */

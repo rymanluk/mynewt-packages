@@ -48,6 +48,16 @@ gnss_nmea_get_field_decoder(const char *tag,
 	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_gga;
 	} else if (!strcmp(&tag[2], "RMC")) {
 	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_rmc;
+	} else if (!strcmp(&tag[2], "GST")) {
+	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_gst;
+	} else if (!strcmp(&tag[2], "GSA")) {
+	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_gsa;
+	} else if (!strcmp(&tag[2], "GLL")) {
+	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_gll;
+	} else if (!strcmp(&tag[2], "GSV")) {
+	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_gsv;
+	} else if (!strcmp(&tag[2], "VTG")) {
+	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_vtg;
 	}
 
     }
@@ -91,11 +101,11 @@ gnss_decode_nmea_field(gnss_decoder_t *ctx)
     } else {
 	if (!nctx->field_decoder(&ctx->gnss_event->nmea.gga,
 				 nctx->buffer, nctx->fid)) {
-	    console_out('-');
+	    //console_out('-');
 	    nctx->stats.parsing_error++;
 	    return false;
 	} else {
-	    console_out('*');
+	    //console_out('*');
 	}
     }
 
@@ -208,7 +218,7 @@ gnss_nmea_decoder(gnss_decoder_t *ctx, uint8_t byte)
 	ctx->gnss_event = NULL;
 
 	/* Job's done */
-	console_out('\n');
+	//console_out('\n');
 	nctx->state = 0x00;
 	break;
 
@@ -247,7 +257,6 @@ gnss_nmea_decoder(gnss_decoder_t *ctx, uint8_t byte)
 
     }
 
-    //console_out(byte);
     return true;
 
  trash_it:

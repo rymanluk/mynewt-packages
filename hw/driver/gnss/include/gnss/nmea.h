@@ -47,6 +47,13 @@
 #define GNSS_NMEA_FAA_PRECISE			      'P'
 
 /**
+ * GSA mode
+ */
+#define GNSS_NMEA_GSA_NO_FIX			        1
+#define GNSS_NMEA_GSA_2D_FIX			        2
+#define GNSS_NMEA_GSA_3D_FIX			        3
+
+/**
  * Talker Id
  */
 #define GNSS_NMEA_TALKER_GP  			      601
@@ -143,10 +150,10 @@ struct gnss_nmea_gll {
  * GSV - Satellites in view
  */
 struct gnss_nmea_gsv {
+    gnss_sat_info_t sat_info[4];	/**< Satellite info		   */
     uint8_t         msg_count;		/**< Number of messages 	   */
     uint8_t         msg_id;		/**< Index of this message	   */
     uint8_t         total_sats;		/**< Total number of Sat. in view  */
-    gnss_sat_info_t sat_info[4];	/**< Satellite info		   */
 };
 
 /**
@@ -215,7 +222,12 @@ bool gnss_nmea_field_parse_time(const char *str, gnss_time_t *val);
 bool gnss_nmea_field_parse_crc(const char *str, uint8_t *val);
 
 bool gnss_nmea_decoder_gga(struct gnss_nmea_gga *gga, char *field, int fid);
-bool gnss_nmea_decoder_rmc(struct gnss_nmea_rmc *rcm, char *field, int fid);
+bool gnss_nmea_decoder_rmc(struct gnss_nmea_rmc *rmc, char *field, int fid);
+bool gnss_nmea_decoder_gsa(struct gnss_nmea_gsa *gsa, char *field, int fid);
+bool gnss_nmea_decoder_gst(struct gnss_nmea_gst *gst, char *field, int fid);
+bool gnss_nmea_decoder_gsv(struct gnss_nmea_gsv *gsv, char *field, int fid);
+bool gnss_nmea_decoder_gll(struct gnss_nmea_gll *gll, char *field, int fid);
+bool gnss_nmea_decoder_vtg(struct gnss_nmea_vtg *vtg, char *field, int fid);
 void gnss_nmea_dump_gga(struct gnss_nmea_gga *gga);
 void gnss_nmea_dump_rmc(struct gnss_nmea_rmc *rmc);
 
