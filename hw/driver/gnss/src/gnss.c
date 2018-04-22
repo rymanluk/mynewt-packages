@@ -7,6 +7,21 @@
 
 #include <console/console.h>
 
+
+#include <log/log.h>
+
+struct log _gnss_log;
+
+
+static struct os_eventq *_gnss_internal_evq = NULL;
+
+static struct os_mempool gnss_pool;
+
+static os_membuf_t gnss_memory_buffer[
+	      OS_MEMPOOL_SIZE(GNSS_EVENT_MAX, sizeof(gnss_event_t))];
+
+
+
 int
 gnss_uart_rx_char(void *arg, uint8_t byte)
 {
@@ -38,6 +53,69 @@ gnss_uart_tx_done(void *arg)
 }
 
 
+
+void
+gnss_internal_evq_set(struct os_eventq *evq)
+{
+    _gnss_internal_evq = evq;
+}
+
+
+
+static void
+gnss_os_gnss_event_cb(struct os_event *ev)
+{
+    gnss_event_t   *gnss_event = (gnss_event_t   *) ev;
+    gnss_decoder_t *ctx        = (gnss_decoder_t *) ev->ev_arg;
+
+    switch(ctx->decoder) {
+    case GNSS_DECODER_NMEA:
+	gnss_nmea_log(&gnss_event->nmea);
+	break;
+    }
+
+    ctx->callback(ctx->decoder, gnss_event);
+    
+    os_memblock_put(&gnss_pool, ev);
+}
+
+static void
+gnss_os_error_event_cb(struct os_event *ev)
+{
+    gnss_decoder_t *ctx = (gnss_decoder_t *) ev;
+    ctx->error_callback(ctx, ctx->error);
+    ctx->error = GNSS_ERROR_NONE;
+}
+
+
+
+
+
+
+void
+gnss_os_emit_error_event(gnss_decoder_t *ctx, unsigned int error)
+{
+    os_eventq_put(_gnss_internal_evq, &ctx->error_event);
+}
+
+void
+gnss_os_emit_gnss_event(gnss_decoder_t *ctx)
+{
+    os_eventq_put(_gnss_internal_evq, &ctx->gnss_event->event);
+}
+
+
+gnss_event_t *
+gnss_os_fetch_gnss_event(gnss_decoder_t *ctx)
+{
+    gnss_event_t *evt = os_memblock_get(&gnss_pool);
+    evt->event = (struct os_event) {
+	.ev_cb  = gnss_os_gnss_event_cb,
+	.ev_arg = ctx,
+    };
+    return evt;
+}
+
 bool
 gnss_send_cmd(gnss_decoder_t *ctx, char *cmd)
 {
@@ -45,7 +123,7 @@ gnss_send_cmd(gnss_decoder_t *ctx, char *cmd)
     char crc[3];
     snprintf(crc, sizeof(crc), "%02x", gnss_nmea_crc(cmd));
 
-     char *msg[] = { "$", cmd, "*", crc, "\r\n" };
+    char *msg[] = { "$", cmd, "*", crc, "\r\n" };
     for (int i = 0 ; i < sizeof(msg) / sizeof(*msg) ; i++) {
 	os_sem_pend(&ctx->tx_sem, OS_TIMEOUT_NEVER);
 	ctx->tx_string = msg[i];
@@ -53,14 +131,9 @@ gnss_send_cmd(gnss_decoder_t *ctx, char *cmd)
     }
     os_time_delay(10);
 
-
     return true;
 }
 
-//    gnss_send_cmd(g, "PGCMD,380,7");        // SDK Mode
-//    gnss_send_cmd(g, "PGCMD,229,1,1,0,1");  // GPS + GLONAS + Galileo
-//    gnss_send_cmd(g, "PGCMD,218,1");        // NMEA Sentence
-//    gnss_send_cmd(g, "PMTK104");            // Full cold start
 
 
 bool
@@ -85,7 +158,15 @@ gnss_decoder(gnss_decoder_t *ctx, uint8_t byte)
 void
 gnss_init(void)
 {
-    gnss_os_init();
+    log_register("gnss", &_gnss_log,
+		 &log_console_handler, NULL, LOG_LEVEL_DEBUG);
+    int rc;
+    rc = os_mempool_init(&gnss_pool, GNSS_EVENT_MAX, sizeof(gnss_event_t),
+			 gnss_memory_buffer, "gnss_pool");
+    assert(rc == 0);
+
+    _gnss_internal_evq = os_eventq_dflt_get();
+
 }
 
 void
@@ -100,5 +181,7 @@ gnss_decoder_init(gnss_decoder_t *ctx, int decoder,
     ctx->error_callback = error_callback;
     os_sem_init(&ctx->tx_sem, 1);
 
-    gnss_os_decoder_init(ctx);
+    ctx->error_event.ev_cb  = gnss_os_error_event_cb;
+    ctx->error_event.ev_arg = ctx;
+
 }

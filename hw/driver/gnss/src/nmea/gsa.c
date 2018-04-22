@@ -1,22 +1,30 @@
 #include <gnss/gnss.h>
-#include <gnss/mynewt.h>
+#include <log/log.h>
 
 void
-gnss_nmea_dump_gsa(struct gnss_nmea_gsa *gsa)
+gnss_nmea_log_gsa(struct gnss_nmea_gsa *gsa)
 {
     if (gsa->fix_mode != 0) {
-	gnss_os_printf("GSA: PDOP       = %f\n", gsa->pdop);
-	gnss_os_printf("GSA: HDOP       = %f\n", gsa->hdop);
-	gnss_os_printf("GSA: VDOP       = %f\n", gsa->vdop);
-	gnss_os_printf("GSA: Satellites =");
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GSA: PDOP       = %f\n", gsa->pdop);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GSA: HDOP       = %f\n", gsa->hdop);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GSA: VDOP       = %f\n", gsa->vdop);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GSA: Satellites =");
 	for (int i = 0 ; i < 12 ; i++) {
-	    gnss_os_printf(" %d", gsa->sid[i]);
+	    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		     " %d", gsa->sid[i]);
 	}
-	gnss_os_printf(" \n");
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 " \n");
 	
-	gnss_os_printf("GSA: FIX mode   = %d\n", gsa->fix_mode);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GSA: FIX mode   = %d\n", gsa->fix_mode);
     } else {
-	gnss_os_printf("GSA: <no valid output>\n");
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GSA: <no valid output>\n");
     }
 }
 

@@ -1,31 +1,22 @@
+#include <string.h>
 #include <gnss/gnss.h>
-#include <gnss/mynewt.h>
+#include <gnss/mediatek.h>
+#include <log/log.h>
 
 void
-gnss_nmea_dump_pgack(struct gnss_nmea_pgack *pgack)
+gnss_nmea_log_pgack(struct gnss_nmea_pgack *pgack)
 {
-
     if (pgack->type < 1000) {
-	gnss_os_printf("PGACK[%d]: %d\n",
-		       pgack->type, pgack->msg);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "PGACK[%d]: %d\n", pgack->type, pgack->msg);
     } else if (pgack->type == GNSS_NMEA_PGACK_TYPE_EPE) {
-	gnss_os_printf("PGACK[EPE]: h=%f, v=%f\n",
-		       pgack->epe.h, pgack->epe.v);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "PGACK[EPE]: h=%f, v=%f\n", pgack->epe.h, pgack->epe.v);
+    } else {
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "PGACK: <unknown>\n");
     }
-
-
 }
-
-
-
-//PMTK011,MTKGPS
-//PMTK010,001
-//PMTK001,x,3
-
-
-
-
-
 
 
 static inline

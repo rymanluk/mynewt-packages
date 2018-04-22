@@ -1,32 +1,40 @@
 #include <gnss/gnss.h>
-#include <gnss/mynewt.h>
+#include <log/log.h>
 
 void
-gnss_nmea_dump_rmc(struct gnss_nmea_rmc *rmc)
+gnss_nmea_log_rmc(struct gnss_nmea_rmc *rmc)
 {
     if (rmc->date.present) {
-	gnss_os_printf("RMC: Date       = %2d-%02d-%02d\n",
-		       rmc->date.year,
-		       rmc->date.month,
-		       rmc->date.day);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "RMC: Date       = %2d-%02d-%02d\n",
+		 rmc->date.year,
+		 rmc->date.month,
+		 rmc->date.day);
     }
     if (rmc->time.present) {
-	gnss_os_printf("RMC: Time       = %2d:%02d:%02d.%03d\n",
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "RMC: Time       = %2d:%02d:%02d.%03d\n",
 		       rmc->time.hours,
 		       rmc->time.minutes,
 		       rmc->time.seconds,
 		       rmc->time.microseconds / 1000);
     }
     if (rmc->valid) {
-	gnss_os_printf("RMC: LatLng     = %f, %f\n", rmc->latitude, rmc->longitude);
-	gnss_os_printf("RMC: Speed      = %f\n", rmc->speed);
-	gnss_os_printf("RMC: Course     = %f\n", rmc->course);
-	gnss_os_printf("RMC: Variation  = %f\n", rmc->variation);
-	gnss_os_printf("RMC: FAA mode   = %c\n", rmc->faa_mode);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "RMC: LatLng     = %f, %f\n", rmc->latitude, rmc->longitude);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "RMC: Speed      = %f\n", rmc->speed);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "RMC: Course     = %f\n", rmc->course);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "RMC: Variation  = %f\n", rmc->variation);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "RMC: FAA mode   = %c\n", rmc->faa_mode);
     }
 
     if (!rmc->date.present && !rmc->time.present && !rmc->valid) {
-	gnss_os_printf("RMC: <no valid output>\n");
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "RMC: <no valid output>\n");
     }
 }
 

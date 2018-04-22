@@ -1,20 +1,23 @@
 #include <gnss/gnss.h>
-#include <gnss/mynewt.h>
+#include <log/log.h>
 
 void
-gnss_nmea_dump_gsv(struct gnss_nmea_gsv *gsv)
+gnss_nmea_log_gsv(struct gnss_nmea_gsv *gsv)
 {
-    gnss_os_printf("GSV: Count      = %d\n", gsv->msg_count);
-    gnss_os_printf("GSV: Idx        = %d\n", gsv->msg_idx);
-    gnss_os_printf("GSV: Total      = %d\n", gsv->total_sats);
+    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+	     "GSV: Count      = %d\n", gsv->msg_count);
+    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+	     "GSV: Idx        = %d\n", gsv->msg_idx);
+    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+	     "GSV: Total      = %d\n", gsv->total_sats);
     for (int i = 0 ; i < 4 ; i++) {
-	gnss_os_printf("GSV: Satellite  = %d, %d, %d, %d\n",
-		       gsv->sat_info[i].prn,
-		       gsv->sat_info[i].elevation,
-		       gsv->sat_info[i].azimuth,
-		       gsv->sat_info[i].snr);
+	    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		     "GSV: Satellite  = %d, %d, %d, %d\n",
+		     gsv->sat_info[i].prn,
+		     gsv->sat_info[i].elevation,
+		     gsv->sat_info[i].azimuth,
+		     gsv->sat_info[i].snr);
     }
-
 }
 
 

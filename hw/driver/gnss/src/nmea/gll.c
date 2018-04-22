@@ -1,23 +1,27 @@
 #include <gnss/gnss.h>
-#include <gnss/mynewt.h>
+#include <log/log.h>
 
 void
-gnss_nmea_dump_gll(struct gnss_nmea_gll *gll)
+gnss_nmea_log_gll(struct gnss_nmea_gll *gll)
 {
     if (gll->time.present) {
-	gnss_os_printf("GLL: Time       = %2d:%02d:%02d.%03d\n",
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GLL: Time       = %2d:%02d:%02d.%03d\n",
 		       gll->time.hours,
 		       gll->time.minutes,
 		       gll->time.seconds,
 		       gll->time.microseconds / 1000);
     }
     if (gll->valid) {
-	gnss_os_printf("GLL: LatLng     = %f, %f\n", gll->latitude, gll->longitude);
-	gnss_os_printf("GLL: FAA mode   = %c\n", gll->faa_mode);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GLL: LatLng     = %f, %f\n", gll->latitude, gll->longitude);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GLL: FAA mode   = %c\n", gll->faa_mode);
     }
 
     if (!gll->time.present && !gll->valid) {
-	gnss_os_printf("GLL: <no valid output>\n");
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GLL: <no valid output>\n");
     }
 }
 

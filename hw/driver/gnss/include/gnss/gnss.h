@@ -6,6 +6,9 @@
 #include <gnss/os_types.h>
 
 
+
+extern struct log _gnss_log;
+
 #define GNSS_ERROR_NONE				0
 #define GNSS_ERROR_WRONG_BAUD_RATE		1
 

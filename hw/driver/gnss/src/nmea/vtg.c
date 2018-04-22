@@ -1,14 +1,17 @@
 #include <gnss/gnss.h>
-#include <gnss/mynewt.h>
+#include <log/log.h>
 
 void
-gnss_nmea_dump_vtg(struct gnss_nmea_vtg *vtg)
+gnss_nmea_log_vtg(struct gnss_nmea_vtg *vtg)
 {
-    gnss_os_printf("VTG: True track = %f\n", vtg->true_track);
-    gnss_os_printf("VTG: Magn track = %f\n", vtg->magnetic_track);
-    gnss_os_printf("VTG: Speed      = %f m/s\n", vtg->speed);
-    gnss_os_printf("VTG: FAA mode   = %c\n", vtg->faa_mode);
-
+    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+	     "VTG: True track = %f\n", vtg->true_track);
+    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+	     "VTG: Magn track = %f\n", vtg->magnetic_track);
+    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+	     "VTG: Speed      = %f m/s\n", vtg->speed);
+    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+	     "VTG: FAA mode   = %c\n", vtg->faa_mode);
 }
 
 

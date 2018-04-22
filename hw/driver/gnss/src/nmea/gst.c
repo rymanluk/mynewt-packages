@@ -1,25 +1,34 @@
 #include <gnss/gnss.h>
-#include <gnss/mynewt.h>
+#include <log/log.h>
 
 void
-gnss_nmea_dump_gst(struct gnss_nmea_gst *gst)
+gnss_nmea_log_gst(struct gnss_nmea_gst *gst)
 {
     if (gst->time.present) {
-	gnss_os_printf("GST: Time       = %2d:%02d:%02d.%03d\n",
-		       gst->time.hours,
-		       gst->time.minutes,
-		       gst->time.seconds,
-		       gst->time.microseconds / 1000);
-	gnss_os_printf("GST: RMS        = %f\n", gst->rms_stddev);
-	gnss_os_printf("GST: S. major   = %f\n", gst->semi_major_stddev);
-	gnss_os_printf("GST: S. minor   = %f\n", gst->semi_minor_stddev);
-	gnss_os_printf("GST: S. major or= %f\n", gst->semi_major_orientation);
-	gnss_os_printf("GST: Latitude   = %f\n", gst->latitude_stddev);
-	gnss_os_printf("GST: Longitude  = %f\n", gst->longitude_stddev);
-	gnss_os_printf("GST: Altitude   = %f\n", gst->altitude_stddev);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GST: Time       = %2d:%02d:%02d.%03d\n",
+		 gst->time.hours,
+		 gst->time.minutes,
+		 gst->time.seconds,
+		 gst->time.microseconds / 1000);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GST: RMS        = %f\n", gst->rms_stddev);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GST: S. major   = %f\n", gst->semi_major_stddev);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GST: S. minor   = %f\n", gst->semi_minor_stddev);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GST: S. major or= %f\n", gst->semi_major_orientation);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GST: Latitude   = %f\n", gst->latitude_stddev);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GST: Longitude  = %f\n", gst->longitude_stddev);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GST: Altitude   = %f\n", gst->altitude_stddev);
 
     } else {
-	gnss_os_printf("GST: <no valid output>\n");
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GST: <no valid output>\n");
     }
 }
 

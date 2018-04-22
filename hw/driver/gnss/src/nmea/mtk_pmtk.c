@@ -1,21 +1,33 @@
+#include <string.h>
 #include <gnss/gnss.h>
-#include <gnss/mynewt.h>
+#include <log/log.h>
 
 void
-gnss_nmea_dump_pmtk(struct gnss_nmea_pmtk *pmtk)
+gnss_nmea_log_pmtk(struct gnss_nmea_pmtk *pmtk)
 {
 
     switch(pmtk->type) {
     case GNSS_NMEA_PMTK_TYPE_ACK:
-	gnss_os_printf("PMTK[%d]: %d\n", pmtk->ack.cmd, pmtk->ack.status);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "PMTK[ACK]: Cmd = %d, Status = %d\n",
+		 pmtk->ack.cmd, pmtk->ack.status);
 	break;
 
     case GNSS_NMEA_PMTK_TYPE_SYS_MSG:
-	gnss_os_printf("PMTK: %d\n", pmtk->sys_msg);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "PMTK[SYS_MSG]: Status = %d\n",
+		 pmtk->sys_msg);
 	break;
 
     case GNSS_NMEA_PMTK_TYPE_TXT_MSG:
-	gnss_os_printf("PMTK: %s\n", pmtk->txt_msg);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "PMTK[TXT_MSG]: %s\n",
+		 pmtk->txt_msg);
+	break;
+
+    default:
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "PMTK: <unknown>\n");
 	break;
     }
 }

@@ -2,7 +2,6 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <gnss/nmea.h>
-#include <gnss/config.h>
 
 bool
 gnss_nmea_field_parse_char(const char *str, char *val)
