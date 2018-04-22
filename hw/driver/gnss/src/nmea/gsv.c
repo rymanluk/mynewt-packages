@@ -1,4 +1,21 @@
 #include <gnss/gnss.h>
+#include <gnss/mynewt.h>
+
+void
+gnss_nmea_dump_gsv(struct gnss_nmea_gsv *gsv)
+{
+    gnss_os_printf("GSV: Count      = %d\n", gsv->msg_count);
+    gnss_os_printf("GSV: Idx        = %d\n", gsv->msg_idx);
+    gnss_os_printf("GSV: Total      = %d\n", gsv->total_sats);
+    for (int i = 0 ; i < 4 ; i++) {
+	gnss_os_printf("GSV: Satellite  = %d, %d, %d, %d\n",
+		       gsv->sat_info[i].prn,
+		       gsv->sat_info[i].elevation,
+		       gsv->sat_info[i].azimuth,
+		       gsv->sat_info[i].snr);
+    }
+
+}
 
 
 bool
@@ -6,7 +23,7 @@ gnss_nmea_decoder_gsv(struct gnss_nmea_gsv *gsv, char *field, int fid) {
     bool success = true;
     union {
 	long msg_count;
-	long msg_id;
+	long msg_idx;
 	long total_sats;
 	long prn;
 	long elevation;
@@ -27,16 +44,16 @@ gnss_nmea_decoder_gsv(struct gnss_nmea_gsv *gsv, char *field, int fid) {
 	break;	
 
     case  2: 	/* 1-origin number of this message within current group */
-	success = gnss_nmea_field_parse_long(field, &local.msg_id) &&
-	          (local.msg_id <= 63);
+	success = gnss_nmea_field_parse_long(field, &local.msg_idx) &&
+	          (local.msg_idx <= 63);
 	if (success) {
-	    gsv->msg_id = local.msg_id;
+	    gsv->msg_idx = local.msg_idx;
 	}
 	break;
 
     case  3: 	/* Total number of satellites in view */
 	success = gnss_nmea_field_parse_long(field, &local.total_sats) &&
-	          (local.msg_id <= 255);
+	          (local.total_sats <= 255);
 	if (success) {
 	    gsv->total_sats = local.total_sats;
 	}

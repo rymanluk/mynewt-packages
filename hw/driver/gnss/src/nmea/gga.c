@@ -1,19 +1,23 @@
-#include <console/console.h>
 #include <gnss/gnss.h>
+#include <gnss/mynewt.h>
 
 void
 gnss_nmea_dump_gga(struct gnss_nmea_gga *gga)
 {
-    console_printf("Time: %2d:%02d:%02d.%03d\n",
-		   gga->time.hours,
-		   gga->time.minutes,
-		   gga->time.seconds,
-		   gga->time.microseconds / 1000);
-    console_printf("LatLng: %f, %f\n", gga->latitude, gga->longitude);
-    console_printf("Altitude: %f \n", gga->altitude);
-    console_printf("HDOP : %f\n", gga->hdop);
-    console_printf("FIX: %d\n", gga->fix_indicator);
-    console_printf("Satellites : %d\n", gga->satellites_in_view);
+    if (gga->time.present) {
+	gnss_os_printf("GGA: Time       = %2d:%02d:%02d.%03d\n",
+		       gga->time.hours,
+		       gga->time.minutes,
+		       gga->time.seconds,
+		       gga->time.microseconds / 1000);
+    }
+    gnss_os_printf("GGA: DGPS       = %d (%d)\n", gga->dgps_age, gga->dgps_sid);
+    gnss_os_printf("GGA: Geoid sep. = %f\n", gga->geoid_separation);
+    gnss_os_printf("GGA: LatLng     = %f, %f\n", gga->latitude, gga->longitude);
+    gnss_os_printf("GGA: Altitude   = %f \n", gga->altitude);
+    gnss_os_printf("GGA: HDOP       = %f\n", gga->hdop);
+    gnss_os_printf("GGA: FIX        = %d\n", gga->fix_indicator);
+    gnss_os_printf("GGA: Satellites = %d\n", gga->satellites_in_view);
 }
 
 

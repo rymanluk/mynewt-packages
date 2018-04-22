@@ -13,55 +13,71 @@
 
 static gnss_nmea_field_decoder_t
 gnss_nmea_get_field_decoder(const char *tag,
-			   uint16_t *talker, uint16_t *sentence)
+			    uint16_t *talker, uint16_t *sentence)
 {
     gnss_nmea_field_decoder_t field_decoder = NULL;
+    uint16_t                  t_id          = 0;
+    uint16_t                  s_id          = 0;
 
-    if (!strncmp(tag, "PMTK", 4)) {
-	if (talker) {
-	    *talker = GNSS_NMEA_TALKER_PMTK;
-	}
-	if (sentence) {
-	    *sentence = strtoul(&tag[4], NULL, 10);
-	}
-	// gns_decode_pmtk
-
-    } else if (!strcmp(tag, "PBUX")) {
-	if (talker) {
-	    *talker = GNSS_NMEA_TALKER_PBUX;
-	}
-	if (sentence) {
-	    *sentence = 0;
-	}
-	// gns_decode_pbux
-
-    }  else if (strlen(tag) == 5) {
-	if (talker) {
-	    char str[3] = { tag[0], tag[1], 0 };
-	    *talker = (uint16_t)strtoul(str, NULL, 36);
-	}
-	if (sentence) {
-	    *sentence = (uint16_t)strtoul(&tag[2], NULL, 36);
-	}
-
-	if        (!strcmp(&tag[2], "GGA")) {
+    /* Easy case, tag is coded with 5 char: talker(2) + sentence(3) */
+    if (strlen(tag) == 5) {
+	char talker_str[3] = { tag[0], tag[1], 0 };
+	t_id = (uint16_t)strtoul(talker_str, NULL, 36);
+	s_id = (uint16_t)strtoul(&tag[2],    NULL, 36);
+	
+	switch(s_id) {
+#if defined(GNSS_NMEA_USE_GGA)
+	case GNSS_NMEA_SENTENCE_GGA:
 	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_gga;
-	} else if (!strcmp(&tag[2], "RMC")) {
-	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_rmc;
-	} else if (!strcmp(&tag[2], "GST")) {
-	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_gst;
-	} else if (!strcmp(&tag[2], "GSA")) {
-	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_gsa;
-	} else if (!strcmp(&tag[2], "GLL")) {
+	    break;
+#endif
+#if defined(GNSS_NMEA_USE_GLL)
+	case GNSS_NMEA_SENTENCE_GLL:
 	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_gll;
-	} else if (!strcmp(&tag[2], "GSV")) {
+	    break;
+#endif
+#if defined(GNSS_NMEA_USE_GSA)
+	case GNSS_NMEA_SENTENCE_GSA:
+	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_gsa;
+	    break;
+#endif
+#if defined(GNSS_NMEA_USE_GST)
+	case GNSS_NMEA_SENTENCE_GST:
+	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_gst;
+	    break;
+#endif
+#if defined(GNSS_NMEA_USE_GSV)
+	case GNSS_NMEA_SENTENCE_GSV:
 	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_gsv;
-	} else if (!strcmp(&tag[2], "VTG")) {
+	    break;
+#endif
+#if defined(GNSS_NMEA_USE_RMC)
+	case GNSS_NMEA_SENTENCE_RMC:
+	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_rmc;
+	    break;
+#endif
+#if defined(GNSS_NMEA_USE_VTG)
+	case GNSS_NMEA_SENTENCE_VTG:
 	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_vtg;
+	    break;
+#endif
 	}
 
+    /* Proprietary tags */
+    } else if (!strncmp(tag, "PMTK", 4)) {
+	t_id = GNSS_NMEA_TALKER_PMTK;
+	s_id = strtoul(&tag[4], NULL, 10);	
     }
     
+    if (field_decoder != NULL) {
+	if (talker) {
+	    *talker   = t_id;
+	}
+	if (sentence) {
+	    *sentence = s_id;
+	}
+    }
+
     return field_decoder;
 }
 
@@ -99,7 +115,7 @@ gnss_decode_nmea_field(gnss_decoder_t *ctx)
 	
     /* Decode NMEA field (field id >= 1) */
     } else {
-	if (!nctx->field_decoder(&ctx->gnss_event->nmea.gga,
+	if (!nctx->field_decoder(&ctx->gnss_event->nmea.data,
 				 nctx->buffer, nctx->fid)) {
 	    //console_out('-');
 	    nctx->stats.parsing_error++;

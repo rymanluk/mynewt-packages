@@ -1,35 +1,34 @@
-#include <ctype.h>
-#include <console/console.h>
 #include <gnss/gnss.h>
+#include <gnss/mynewt.h>
 
 void
 gnss_nmea_dump_rmc(struct gnss_nmea_rmc *rmc)
 {
+    if (rmc->date.present) {
+	gnss_os_printf("RMC: Date       = %2d-%02d-%02d\n",
+		       rmc->date.year,
+		       rmc->date.month,
+		       rmc->date.day);
+    }
     if (rmc->time.present) {
-	console_printf("Time: %2d:%02d:%02d.%03d\n",
+	gnss_os_printf("RMC: Time       = %2d:%02d:%02d.%03d\n",
 		       rmc->time.hours,
 		       rmc->time.minutes,
 		       rmc->time.seconds,
 		       rmc->time.microseconds / 1000);
     }
-    if (rmc->date.present) {
-	console_printf("Date: %2d-%02d-%02d\n",
-		       rmc->date.year,
-		       rmc->date.month,
-		       rmc->date.day);
-    }
     if (rmc->valid) {
-	console_printf("LatLng: %f, %f\n", rmc->latitude, rmc->longitude);
-	console_printf("Speed : %f\n", rmc->speed);
-	console_printf("Course: %f\n", rmc->course);
-	console_printf("Variation: %f\n", rmc->variation);
-	console_printf("FAA mode : %c\n", rmc->faa_mode);
-    } else {
-	console_printf("No valid RMC data\n");
+	gnss_os_printf("RMC: LatLng     = %f, %f\n", rmc->latitude, rmc->longitude);
+	gnss_os_printf("RMC: Speed      = %f\n", rmc->speed);
+	gnss_os_printf("RMC: Course     = %f\n", rmc->course);
+	gnss_os_printf("RMC: Variation  = %f\n", rmc->variation);
+	gnss_os_printf("RMC: FAA mode   = %c\n", rmc->faa_mode);
     }
-    
-}
 
+    if (!rmc->date.present && !rmc->time.present && !rmc->valid) {
+	gnss_os_printf("RMC: <no valid output>\n");
+    }
+}
 
 
 bool

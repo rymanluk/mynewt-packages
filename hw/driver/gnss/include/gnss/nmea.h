@@ -79,21 +79,6 @@
 #define GNSS_NMEA_SENTENCE_VTG 			    41236
 
 /**
- * RMC - Recommended Minimum Navigation Information
- */
-struct gnss_nmea_rmc {
-    gnss_date_t  date;			/**< Date (2-digit year) 	   */ 
-    gnss_time_t  time;			/**< UTC Time            	   */
-    gnss_float_t latitude;		/**< Latitude (decimale degrees)   */
-    gnss_float_t longitude;		/**< Longitude (decimal degrees)   */
-    gnss_float_t speed;			/**< Speed over ground (m/s)	   */
-    gnss_float_t course;		/**< Course (degrees)		   */
-    gnss_float_t variation;		/**< Magnetic variation (degrees)  */
-    bool         valid;			/**< Valid fix			   */
-    char         faa_mode;		/**< FAA mode			   */
-};
-
-/**
  * GGA - Global Positioning System Fix Data
  */
 struct gnss_nmea_gga {
@@ -107,6 +92,29 @@ struct gnss_nmea_gga {
     uint16_t	 dgps_sid;		/**< Satelitte Id of DGPS (0-1023) */
     uint8_t      fix_indicator     :4;	/**< Fix quality (0-8)             */
     uint8_t      satellites_in_view:4;	/**< Nb. of satelittes in view (0-12)*/
+};
+
+/**
+ * GLL - Geographic Position - Latitude/Longitude
+ */
+struct gnss_nmea_gll {
+    gnss_float_t latitude;		/**< Latitude  (decimal degrees)   */
+    gnss_float_t longitude;		/**< Longitude (decimal degrees)   */
+    gnss_time_t  time;			/**< UTC Time            	   */
+    bool         valid;			/**< Valid			   */
+    char         faa_mode;		/**< FAA mode			   */
+};
+
+/**
+ * GSA - GPS DOP and active satellites
+ */
+struct gnss_nmea_gsa {
+    gnss_float_t pdop;			/**< PDOP			   */
+    gnss_float_t hdop;			/**< HDOP			   */
+    gnss_float_t vdop;			/**< VDOP			   */
+    uint8_t      sid[12];		/**< List of satelittes id	   */
+    uint8_t      mode;			/**< Mode			   */
+    uint8_t      fix_type;		/**< Fix type			   */
 };
 
 /**
@@ -124,36 +132,28 @@ struct gnss_nmea_gst {
 };
 
 /**
- * GSA - GPS DOP and active satellites
- */
-struct gnss_nmea_gsa {
-    gnss_float_t pdop;			/**< PDOP			   */
-    gnss_float_t hdop;			/**< HDOP			   */
-    gnss_float_t vdop;			/**< VDOP			   */
-    uint8_t      sat_id[12];		/**< List of satelittes id	   */
-    char         mode;			/**< Mode			   */
-    uint8_t      fix_type;		/**< Fix type			   */
-};
-
-/**
- * GLL - Geographic Position - Latitude/Longitude
- */
-struct gnss_nmea_gll {
-    gnss_float_t latitude;		/**< Latitude  (decimal degrees)   */
-    gnss_float_t longitude;		/**< Longitude (decimal degrees)   */
-    gnss_time_t  time;			/**< UTC Time            	   */
-    bool         valid;			/**< Valid			   */
-    char         faa_mode;		/**< FAA mode			   */
-};
-
-/**
  * GSV - Satellites in view
  */
 struct gnss_nmea_gsv {
     gnss_sat_info_t sat_info[4];	/**< Satellite info		   */
     uint8_t         msg_count;		/**< Number of messages 	   */
-    uint8_t         msg_id;		/**< Index of this message	   */
+    uint8_t         msg_idx;		/**< Index of this message	   */
     uint8_t         total_sats;		/**< Total number of Sat. in view  */
+};
+
+/**
+ * RMC - Recommended Minimum Navigation Information
+ */
+struct gnss_nmea_rmc {
+    gnss_date_t  date;			/**< Date (2-digit year) 	   */ 
+    gnss_time_t  time;			/**< UTC Time            	   */
+    gnss_float_t latitude;		/**< Latitude (decimale degrees)   */
+    gnss_float_t longitude;		/**< Longitude (decimal degrees)   */
+    gnss_float_t speed;			/**< Speed over ground (m/s)	   */
+    gnss_float_t course;		/**< Course (degrees)		   */
+    gnss_float_t variation;		/**< Magnetic variation (degrees)  */
+    bool         valid;			/**< Valid fix			   */
+    char         faa_mode;		/**< FAA mode			   */
 };
 
 /**
@@ -162,25 +162,42 @@ struct gnss_nmea_gsv {
 struct gnss_nmea_vtg {
     gnss_float_t true_track;		/**< True track (degrees)	   */
     gnss_float_t magnetic_track;	/**< Magnetic track (degress)      */
-    gnss_float_t speed;			/**< Speed (km/h)		   */
+    gnss_float_t speed;			/**< Speed (m/s)		   */
     char         faa_mode;		/**< FAA mode			   */
 };
 
 /**
  * NMEA message
  */
+
+union gnss_nmea_data {
+#ifdef GNSS_NMEA_USE_GGA
+	struct gnss_nmea_gga gga;
+#endif
+#ifdef GNSS_NMEA_USE_GLL
+	struct gnss_nmea_gll gll;
+#endif
+#ifdef GNSS_NMEA_USE_GSA
+	struct gnss_nmea_gsa gsa;
+#endif
+#ifdef GNSS_NMEA_USE_GST
+	struct gnss_nmea_gst gst;
+#endif
+#ifdef GNSS_NMEA_USE_GSV
+	struct gnss_nmea_gsv gsv;
+#endif
+#ifdef GNSS_NMEA_USE_RMC
+	struct gnss_nmea_rmc rmc;
+#endif
+#ifdef GNSS_NMEA_USE_VTG
+	struct gnss_nmea_vtg vtg;
+#endif
+};
+
 typedef struct gnss_nmea {
     uint16_t talker;
     uint16_t sentence;
-    union {
-	struct gnss_nmea_rmc rmc;
-	struct gnss_nmea_gga gga;
-	struct gnss_nmea_gsa gsa;
-	struct gnss_nmea_gst gst;
-	struct gnss_nmea_gsv gsv;
-	struct gnss_nmea_gll gll;
-	struct gnss_nmea_vtg vtg;
-    };
+    union gnss_nmea_data data;
 } gnss_nmea_t;
 
 
@@ -189,7 +206,7 @@ typedef struct gnss_nmea {
 
 
 
-typedef bool (*gnss_nmea_field_decoder_t)(void *, char *field, int fid);
+typedef bool (*gnss_nmea_field_decoder_t)(union gnss_nmea_data *, char *field, int fid);
 
 
 
@@ -221,15 +238,49 @@ bool gnss_nmea_field_parse_date(const char *str, gnss_date_t *val);
 bool gnss_nmea_field_parse_time(const char *str, gnss_time_t *val);
 bool gnss_nmea_field_parse_crc(const char *str, uint8_t *val);
 
+#ifdef GNSS_NMEA_USE_GGA
 bool gnss_nmea_decoder_gga(struct gnss_nmea_gga *gga, char *field, int fid);
-bool gnss_nmea_decoder_rmc(struct gnss_nmea_rmc *rmc, char *field, int fid);
-bool gnss_nmea_decoder_gsa(struct gnss_nmea_gsa *gsa, char *field, int fid);
-bool gnss_nmea_decoder_gst(struct gnss_nmea_gst *gst, char *field, int fid);
-bool gnss_nmea_decoder_gsv(struct gnss_nmea_gsv *gsv, char *field, int fid);
+#endif
+#ifdef GNSS_NMEA_USE_GLL
 bool gnss_nmea_decoder_gll(struct gnss_nmea_gll *gll, char *field, int fid);
+#endif
+#ifdef GNSS_NMEA_USE_GSA
+bool gnss_nmea_decoder_gsa(struct gnss_nmea_gsa *gsa, char *field, int fid);
+#endif
+#ifdef GNSS_NMEA_USE_GST
+bool gnss_nmea_decoder_gst(struct gnss_nmea_gst *gst, char *field, int fid);
+#endif
+#ifdef GNSS_NMEA_USE_GSV
+bool gnss_nmea_decoder_gsv(struct gnss_nmea_gsv *gsv, char *field, int fid);
+#endif
+#ifdef GNSS_NMEA_USE_RMC
+bool gnss_nmea_decoder_rmc(struct gnss_nmea_rmc *rmc, char *field, int fid);
+#endif
+#ifdef GNSS_NMEA_USE_VTG
 bool gnss_nmea_decoder_vtg(struct gnss_nmea_vtg *vtg, char *field, int fid);
+#endif
+
+#ifdef GNSS_NMEA_USE_GGA
 void gnss_nmea_dump_gga(struct gnss_nmea_gga *gga);
+#endif
+#ifdef GNSS_NMEA_USE_GLL
+void gnss_nmea_dump_gll(struct gnss_nmea_gll *gll);
+#endif
+#ifdef GNSS_NMEA_USE_GSA
+void gnss_nmea_dump_gsa(struct gnss_nmea_gsa *gsa);
+#endif
+#ifdef GNSS_NMEA_USE_GST
+void gnss_nmea_dump_gst(struct gnss_nmea_gst *gst);
+#endif
+#ifdef GNSS_NMEA_USE_GSV
+void gnss_nmea_dump_gsv(struct gnss_nmea_gsv *gsv);
+#endif
+#ifdef GNSS_NMEA_USE_RMC
 void gnss_nmea_dump_rmc(struct gnss_nmea_rmc *rmc);
+#endif
+#ifdef GNSS_NMEA_USE_VTG
+void gnss_nmea_dump_vtg(struct gnss_nmea_vtg *vtg);
+#endif
 
 
 #endif

@@ -1,9 +1,33 @@
 # Package: hw/driver/gnss
 
 syscfg.defs:
-    GNSS_NMEA_GGA:
+    GNSS_NMEA_USE_RMC:
+        description: >
+            Suppport for: RMC - Recommended Minimum Navigation Information
+        value: 1
+    GNSS_NMEA_USE_GGA:
         description: >
             Suppport for: GGA - Global Positioning System Fix Data
+        value: 1
+    GNSS_NMEA_USE_GST:
+        description: >
+            Suppport for: GST - GPS Pseudorange Noise Statistics
+        value: 1
+    GNSS_NMEA_USE_GSA:
+        description: >
+            Suppport for: GSA - GPS DOP and active satellites
+        value: 1
+    GNSS_NMEA_USE_GLL:
+        description: >
+            Suppport for: GLL - Geographic Position - Latitude/Longitude
+        value: 1
+    GNSS_NMEA_USE_GSV:
+        description: >
+            Suppport for: GSV - Satellites in view
+        value: 1
+    GNSS_NMEA_USE_VTG:
+        description: >
+            Suppport for: VTG - Track made good and Ground speed
         value: 1
     GNSS_EVENT_MAX:
         description: >
@@ -13,3 +37,9 @@ syscfg.defs:
         description: >
             Use half-flot instead of float.
         value: 'ieee'
+    GNSS_NMEA_DUMPER:
+        description: >
+            Add support for dumping NMEA message information.
+        value: 1
+        restrictions:
+            - FLOAT_USER
