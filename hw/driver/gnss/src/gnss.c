@@ -5,9 +5,6 @@
 
 #include <uart/uart.h>
 
-#include <console/console.h>
-
-
 #include <log/log.h>
 
 struct log _gnss_log;
@@ -16,9 +13,9 @@ struct log _gnss_log;
 static struct os_eventq *_gnss_internal_evq = NULL;
 
 static struct os_mempool gnss_event_pool;
-
 static os_membuf_t gnss_event_buffer[
-	      OS_MEMPOOL_SIZE(GNSS_EVENT_MAX, sizeof(gnss_event_t))];
+	     OS_MEMPOOL_SIZE(MYNEWT_VAL(GNSS_EVENT_MAX),
+			     sizeof(gnss_event_t))];
 
 
 #if MYNEWT_VAL(GNSS_NMEA_EVENT_MAX) > 0
@@ -69,11 +66,12 @@ gnss_internal_evq_set(struct os_eventq *evq)
 
 
 static void
-gnss_os_gnss_event_cb(struct os_event *ev)
+gnss_event_cb(struct os_event *ev)
 {
     gnss_event_t   *gnss_event = (gnss_event_t   *) ev;
     gnss_decoder_t *ctx        = (gnss_decoder_t *) ev->ev_arg;
 
+    /* Perform logging */
 #if MYNEWT_VAL(GNSS_LOG) > 0
     switch(ctx->decoder) {
 #if MYNEWT_VAL(GNSS_NMEA_LOG) > 0
@@ -83,17 +81,26 @@ gnss_os_gnss_event_cb(struct os_event *ev)
 #endif
     }
 #endif
-    
-    ctx->callback(ctx->decoder, gnss_event);
-    
+
+    /* Trigger user callback */
+    if (ctx->callback) {
+	ctx->callback(ctx->decoder, gnss_event);
+    }
+
+    /* Put event back to the memory block */
     os_memblock_put(&gnss_event_pool, ev);
 }
 
 static void
-gnss_os_error_event_cb(struct os_event *ev)
+gnss_error_event_cb(struct os_event *ev)
 {
     gnss_decoder_t *ctx = (gnss_decoder_t *) ev;
-    ctx->error_callback(ctx, ctx->error);
+
+    /* Trigger user callback */
+    if (ctx->error_callback)
+	ctx->error_callback(ctx, ctx->error);
+
+    /* Clear error */
     ctx->error = GNSS_ERROR_NONE;
 }
 
@@ -120,14 +127,14 @@ gnss_os_fetch_gnss_event(gnss_decoder_t *ctx)
 {
     gnss_event_t *evt = os_memblock_get(&gnss_event_pool);
     evt->event = (struct os_event) {
-	.ev_cb  = gnss_os_gnss_event_cb,
+	.ev_cb  = gnss_event_cb,
 	.ev_arg = ctx,
     };
     return evt;
 }
 
 bool
-gnss_send_cmd(gnss_decoder_t *ctx, char *cmd)
+gnss_nmea_send_cmd(gnss_decoder_t *ctx, char *cmd)
 {
     char  crc[3];
     char *msg[5];
@@ -144,7 +151,7 @@ gnss_send_cmd(gnss_decoder_t *ctx, char *cmd)
     msg[4] = "\r\n";
 
     /* Sending command */
-    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT, "Sending: $%s*%s\n", cmd, crc);
+    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT, "Command: $%s*%s\n", cmd, crc);
     
     for (i = 0 ; i < sizeof(msg) / sizeof(*msg) ; i++) {
 	os_sem_pend(&ctx->tx_sem, OS_TIMEOUT_NEVER);
@@ -168,6 +175,8 @@ gnss_decoder(gnss_decoder_t *ctx, uint8_t byte)
 	return false; /* Stop reception */
     }    
 
+    /* Call the appropriate decoder
+     */
     switch(ctx->decoder) {
     case GNSS_DECODER_NMEA:
 	return gnss_nmea_decoder(ctx, byte);
@@ -214,12 +223,12 @@ gnss_decoder_init(gnss_decoder_t *ctx, int decoder,
 		  gnss_error_callback_t error_callback)
 {
     memset(ctx, 0, sizeof(*ctx));
-    ctx->decoder        = decoder;
-    ctx->callback       = callback;
-    ctx->error_callback = error_callback;
+    ctx->decoder            = decoder;
+    ctx->callback           = callback;
+    ctx->error_callback     = error_callback;
     os_sem_init(&ctx->tx_sem, 1);
 
-    ctx->error_event.ev_cb  = gnss_os_error_event_cb;
+    ctx->error_event.ev_cb  = gnss_error_event_cb;
     ctx->error_event.ev_arg = ctx;
 
 }

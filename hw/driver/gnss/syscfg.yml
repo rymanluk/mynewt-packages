@@ -21,6 +21,10 @@ syscfg.defs:
         description: >
             Suppport for MeditaTeK 
         value: 1
+    GNSS_NMEA_YEAR_OFFSET:
+        description: >
+            Offset to use when reading 2-digit year from NMEA sentence.
+        value: 2000
     GNSS_NMEA_USE_PGACK:
         description: >
             Suppport for MeditaTeK PGACK sentence

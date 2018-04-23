@@ -1,9 +1,9 @@
 #ifndef _GNSS_TYPES_H_
 #define _GNSS_TYPES_H_
 
-#include <gnss/config.h>
+#include <syscfg/syscfg.h>
 
-#ifdef GNSS_USE_HALF_FLOAT
+#if defined(MYNEWT_VAL_GNSS_USE_HALF_FLOAT)
 typedef __fp16 gnss_float_t;
 #else
 typedef float  gnss_float_t;
