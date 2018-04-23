@@ -2,8 +2,6 @@
 #include <ctype.h>
 #include <gnss/gnss.h>
 #include <gnss/nmea.h>
-#include <gnss/mynewt.h>
-#include <console/console.h>
 
 
 #define GNSS_STATE_VIRGIN		0x00
@@ -141,11 +139,8 @@ gnss_decode_nmea_field(gnss_decoder_t *ctx)
      */
     if (!nctx->field_decoder(&ctx->gnss_event->nmea.data,
 			     nctx->buffer, nctx->fid)) {
-	//console_out('-');
 	nctx->stats.parsing_error++;
 	return false;
-    } else {
-	//console_out('*');
     }
 
     return true;
@@ -257,7 +252,6 @@ gnss_nmea_decoder(gnss_decoder_t *ctx, uint8_t byte)
 	ctx->gnss_event = NULL;
 
 	/* Job's done */
-	//console_out('\n');
 	nctx->state = 0x00;
 	break;
 

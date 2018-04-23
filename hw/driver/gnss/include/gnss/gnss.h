@@ -3,8 +3,6 @@
 
 #include <gnss/nmea.h>
 #include <gnss/mediatek.h>
-#include <gnss/os_types.h>
-
 
 
 extern struct log _gnss_log;
@@ -40,7 +38,7 @@ bool gnss_nmea_send_cmd(gnss_decoder_t *ctx, char *cmd);
 
 
 struct gnss_event {
-    gnss_os_event_t event;
+    struct os_event event;
     union {
 	struct gnss_nmea nmea;
     };
@@ -59,7 +57,7 @@ struct gnss_decoder {
     int decoder;
     
     int error;
-    gnss_os_event_t error_event;
+    struct os_event error_event;
     gnss_error_callback_t error_callback;
 
     struct gnss_event *gnss_event;
@@ -71,6 +69,13 @@ struct gnss_decoder {
 };
 
 
+gnss_event_t *gnss_os_fetch_gnss_event(gnss_decoder_t *ctx);
+void gnss_os_emit_gnss_event(gnss_decoder_t *ctx);
+
+void gnss_os_emit_error_event(gnss_decoder_t *ctx, unsigned int error);
+
+
+void gnss_internal_evq_set(struct os_eventq *evq);
 
 
 bool gnss_decoder(gnss_decoder_t *ctx, uint8_t byte);
