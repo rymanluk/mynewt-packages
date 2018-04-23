@@ -11,6 +11,11 @@
  * See: http://www.catb.org/gpsd/NMEA.html
  */
 
+struct gnss_nmea_decoder;
+    
+bool gnss_nmea_init(gnss_t *ctx, struct gnss_nmea_decoder *nmea);
+bool gnss_nmea_decoder(gnss_t *ctx, uint8_t byte);
+
 static inline uint8_t
 gnss_nmea_crc(char *str) {
     uint8_t crc = 0;

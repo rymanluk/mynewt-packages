@@ -3,6 +3,14 @@
 
 #include <syscfg/syscfg.h>
 
+
+struct gnss_event;
+struct gnss_decoder;
+
+typedef struct gnss_event gnss_event_t;
+typedef struct gnss_decoder gnss_t;
+
+
 #if defined(MYNEWT_VAL_GNSS_USE_HALF_FLOAT)
 typedef __fp16 gnss_float_t;
 #else

@@ -9,6 +9,13 @@
 #define GNSS_STATE_FLG_CRC		0x02
 #define GNSS_STATE_FLG_CR 		0x04
 
+bool
+gnss_nmea_init(gnss_t *ctx, struct gnss_nmea_decoder *nmea)
+{
+    ctx->protocol.conf    = nmea;
+    ctx->protocol.decoder = gnss_nmea_decoder; /* The decoder */
+    return true;
+}
 
 
 static gnss_nmea_field_decoder_t
@@ -99,9 +106,9 @@ gnss_nmea_get_field_decoder(const char *tag,
 }
 
 static bool
-gnss_decode_nmea_field(gnss_decoder_t *ctx)
+gnss_decode_nmea_field(gnss_t *ctx)
 {
-    struct gnss_nmea_decoder * const nctx = &ctx->nmea;
+    struct gnss_nmea_decoder * const nctx = ctx->protocol.conf;
 
     /* Check that we are in the main part 
      * (ie: started but no crc, no <cr>)
@@ -147,9 +154,9 @@ gnss_decode_nmea_field(gnss_decoder_t *ctx)
 }
 
 bool
-gnss_nmea_decoder(gnss_decoder_t *ctx, uint8_t byte)
+gnss_nmea_decoder(gnss_t *ctx, uint8_t byte)
 {
-    struct gnss_nmea_decoder *nctx = &ctx->nmea;
+    struct gnss_nmea_decoder *nctx = ctx->protocol.conf;
     
     /* Decode NMEA one byte at a time
      */
@@ -163,6 +170,7 @@ gnss_nmea_decoder(gnss_decoder_t *ctx, uint8_t byte)
 		nctx->stats.allocation_error++;
 		goto trash_it;
 	    }
+	    ctx->gnss_event->type = GNSS_EVENT_NMEA;
 	}
 	
 	/* Ensure context is reseted */
