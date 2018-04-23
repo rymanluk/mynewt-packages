@@ -5,8 +5,6 @@
 #include <gnss/mediatek.h>
 #include <gnss/os_types.h>
 
-
-
 extern struct log _gnss_log;
 
 #define GNSS_ERROR_NONE				0
@@ -36,14 +34,6 @@ typedef void (*gnss_error_callback_t)(gnss_decoder_t *ctx, int error);
 
 bool gnss_send_cmd(gnss_decoder_t *ctx, char *cmd);
 
-static inline uint8_t
-gnss_nmea_crc(char *str) {
-   uint8_t crc = 0;
-   for ( ; *str ; str++) {
-       crc ^= *str;
-   }
-   return crc;
-}
 
 
 
@@ -54,11 +44,15 @@ struct gnss_event {
     };
 };
 
+
+
+
 struct gnss_decoder {
+#if MYNEWT_VAL(GNSS_RX_ONLY) == 0
     char *tx_string;
     struct os_sem tx_sem;
     struct uart_dev *uart_dev;
-
+#endif
     
     int decoder;
     

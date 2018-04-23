@@ -21,44 +21,45 @@ gnss_nmea_get_field_decoder(const char *tag,
     uint16_t                  t_id          = 0;
     uint16_t                  s_id          = 0;
 
-    /* Easy case, tag is coded with 5 char: talker(2) + sentence(3) */
+    /* Common case: talker(2) + sentence(3) 
+     */
     if (strlen(tag) == 5) {
 	char talker_str[3] = { tag[0], tag[1], 0 };
 	t_id = (uint16_t)strtoul(talker_str, NULL, 36);
 	s_id = (uint16_t)strtoul(&tag[2],    NULL, 36);
 	
 	switch(s_id) {
-#if defined(GNSS_NMEA_USE_GGA)
+#if MYNEWT_VAL(GNSS_NMEA_USE_GGA) > 0
 	case GNSS_NMEA_SENTENCE_GGA:
 	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_gga;
 	    break;
 #endif
-#if defined(GNSS_NMEA_USE_GLL)
+#if MYNEWT_VAL(GNSS_NMEA_USE_GLL) > 0
 	case GNSS_NMEA_SENTENCE_GLL:
 	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_gll;
 	    break;
 #endif
-#if defined(GNSS_NMEA_USE_GSA)
+#if MYNEWT_VAL(GNSS_NMEA_USE_GSA) > 0
 	case GNSS_NMEA_SENTENCE_GSA:
 	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_gsa;
 	    break;
 #endif
-#if defined(GNSS_NMEA_USE_GST)
+#if MYNEWT_VAL(GNSS_NMEA_USE_GST) > 0
 	case GNSS_NMEA_SENTENCE_GST:
 	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_gst;
 	    break;
 #endif
-#if defined(GNSS_NMEA_USE_GSV)
+#if MYNEWT_VAL(GNSS_NMEA_USE_GSV) > 0
 	case GNSS_NMEA_SENTENCE_GSV:
 	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_gsv;
 	    break;
 #endif
-#if defined(GNSS_NMEA_USE_RMC)
+#if MYNEWT_VAL(GNSS_NMEA_USE_RMC) > 0
 	case GNSS_NMEA_SENTENCE_RMC:
 	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_rmc;
 	    break;
 #endif
-#if defined(GNSS_NMEA_USE_VTG)
+#if MYNEWT_VAL(GNSS_NMEA_USE_VTG) > 0
 	case GNSS_NMEA_SENTENCE_VTG:
 	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_vtg;
 	    break;
@@ -66,19 +67,27 @@ gnss_nmea_get_field_decoder(const char *tag,
 	}
     }
 
+    /* If no decoder found, look for proprietary tag
+     */
     if (field_decoder == NULL) {
+#if MYNEWT_VAL(GNSS_NMEA_USE_PGACK) > 0
 	if (!strcmp(tag, "PGACK")) {
 	    t_id = GNSS_NMEA_TALKER_MTK;
 	    s_id = GNSS_NMEA_SENTENCE_PGACK;
 	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_pgack;
 	}
+#endif
+#if MYNEWT_VAL(GNSS_NMEA_USE_PMTK) > 0
 	if (!strncmp(tag, "PMTK", 4)) {
 	    t_id = GNSS_NMEA_TALKER_MTK;
 	    s_id = GNSS_NMEA_SENTENCE_PMTK;
 	    field_decoder = (gnss_nmea_field_decoder_t)gnss_nmea_decoder_pmtk;
 	}
+#endif
     }
-    
+
+    /* If decoder found, save information about talker/sentence 
+     */
     if (field_decoder != NULL) {
 	if (talker) {
 	    *talker   = t_id;

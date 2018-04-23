@@ -1,6 +1,22 @@
 # Package: hw/driver/gnss
 
 syscfg.defs:
+    GNSS_EVENT_MAX:
+        description: >
+            Maximum number of pending GNSS event. 
+            They are emited in burst, and depend of the verbosity
+            of the GNSS receiver, a goof start could be around 10-20.
+        value: 20
+    GNSS_NMEA_EVENT_MAX:
+        description: >
+            Maximum number of raw NMEA string event. (default: 0)
+            Only activate for debugging purpose, as each event is
+            about ~100 bytes.
+        value: 5
+    GNSS_RX_ONLY:
+        description: >
+            If set to 1, only reception of GNSS message is enabled (default: 0).
+        value: 0
     GNSS_USE_MEDIATEK:
         description: >
             Suppport for MeditaTeK 
@@ -41,17 +57,17 @@ syscfg.defs:
         description: >
             Suppport for: VTG - Track made good and Ground speed
         value: 1
-    GNSS_EVENT_MAX:
-        description: >
-            Maximum number of pending GNSS event.
-        value: 20
     GNSS_USE_HALF_FLOAT:
         description: >
             Use half-flot instead of float.
         value: 'ieee'
-    GNSS_NMEA_DUMPER:
+    GNSS_LOG:
         description: >
-            Add support for dumping NMEA message information.
+            Enable logging of GNNS components.
         value: 1
+    GNSS_NMEA_LOG:
+        description: >
+            Enable logging of parsed NMEA.
+        value: MYNEWT_VAL_GNSS_LOG
         restrictions:
             - FLOAT_USER

@@ -3,12 +3,22 @@
 
 #include <stdint.h>
 #include <stdbool.h>
+#include <os/os.h>
 #include <gnss/types.h>
 #include <gnss/mediatek.h>
 
 /*
  * See: http://www.catb.org/gpsd/NMEA.html
  */
+
+static inline uint8_t
+gnss_nmea_crc(char *str) {
+    uint8_t crc = 0;
+    for ( ; *str ; str++) {
+	crc ^= *str;
+    }
+    return crc;
+}
 
 /*
  * Config
@@ -211,7 +221,10 @@ typedef struct gnss_nmea {
 } gnss_nmea_t;
 
 
-
+typedef struct gnss_nmea_raw_event {
+    struct os_event event;
+    char data[GNSS_NMEA_SENTENCE_MAXBYTES];
+} gnss_nmea_raw_event_t;
 
 
 
@@ -272,8 +285,8 @@ bool gnss_nmea_decoder_vtg(struct gnss_nmea_vtg *vtg, char *field, int fid);
 
 
 
+#if MYNEWT_VAL(GNSS_NMEA_LOG) > 0
 void gnss_nmea_log(struct gnss_nmea *nmea);
-
 #if MYNEWT_VAL(GNSS_NMEA_USE_GGA) > 0
 void gnss_nmea_log_gga(struct gnss_nmea_gga *gga);
 #endif
@@ -294,6 +307,7 @@ void gnss_nmea_log_rmc(struct gnss_nmea_rmc *rmc);
 #endif
 #if MYNEWT_VAL(GNSS_NMEA_USE_VTG) > 0
 void gnss_nmea_log_vtg(struct gnss_nmea_vtg *vtg);
+#endif
 #endif
 
 
