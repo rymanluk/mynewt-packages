@@ -1,7 +1,7 @@
 #include <string.h>
 #include <gnss/gnss.h>
 #include <gnss/mediatek.h>
-#include <log/log.h>
+#include <gnss/log.h>
 
 void
 gnss_nmea_log_pmtk(struct gnss_nmea_pmtk *pmtk)

@@ -2,7 +2,7 @@
 #include <ctype.h>
 #include <gnss/gnss.h>
 #include <gnss/nmea.h>
-
+#include <gnss/log.h>
 
 #define GNSS_STATE_VIRGIN		0x00
 #define GNSS_STATE_FLG_STARTED		0x01
@@ -10,7 +10,7 @@
 #define GNSS_STATE_FLG_CR 		0x04
 
 bool
-gnss_nmea_init(gnss_t *ctx, struct gnss_nmea_decoder *nmea)
+gnss_nmea_init(gnss_t *ctx, struct gnss_nmea *nmea)
 {
     ctx->protocol.conf    = nmea;
     ctx->protocol.decoder = gnss_nmea_decoder; /* The decoder */
@@ -108,7 +108,7 @@ gnss_nmea_get_field_decoder(const char *tag,
 static bool
 gnss_decode_nmea_field(gnss_t *ctx)
 {
-    struct gnss_nmea_decoder * const nctx = ctx->protocol.conf;
+    struct gnss_nmea * const nctx = ctx->protocol.conf;
 
     /* Check that we are in the main part 
      * (ie: started but no crc, no <cr>)
@@ -156,7 +156,7 @@ gnss_decode_nmea_field(gnss_t *ctx)
 bool
 gnss_nmea_decoder(gnss_t *ctx, uint8_t byte)
 {
-    struct gnss_nmea_decoder *nctx = ctx->protocol.conf;
+    struct gnss_nmea *nctx = ctx->protocol.conf;
     
     /* Decode NMEA one byte at a time
      */
@@ -307,7 +307,7 @@ gnss_nmea_decoder(gnss_t *ctx, uint8_t byte)
 }
 
 void
-gnss_nmea_log(struct gnss_nmea *nmea)
+gnss_nmea_log(struct gnss_nmea_message *nmea)
 {    
     switch(nmea->talker) {
     case GNSS_NMEA_TALKER_MTK:

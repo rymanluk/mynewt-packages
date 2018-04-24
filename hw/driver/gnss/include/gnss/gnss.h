@@ -1,11 +1,11 @@
 #ifndef _GNSS_H_
 #define _GNSS_H_
 
+#include <stdint.h>
 #include <gnss/nmea.h>
 #include <gnss/mediatek.h>
 #include <gnss/types.h>
 
-extern struct log _gnss_log;
 
 #define GNSS_ERROR_NONE				0
 #define GNSS_ERROR_WRONG_BAUD_RATE		1
@@ -14,8 +14,7 @@ extern struct log _gnss_log;
 #define GNSS_EVENT_UNKNOWN			0
 #define GNSS_EVENT_NMEA				1
 
-
-
+#define GNSS_MS_TO_TICKS(ms) (((ms) * OS_TICKS_PER_SEC + 999) / 1000)
 
 
 
@@ -41,7 +40,7 @@ struct gnss_event {
     struct os_event event;
     uint8_t type;
     union {
-	struct gnss_nmea nmea;
+	struct gnss_nmea_message nmea;
     };
 };
 
@@ -57,7 +56,14 @@ struct gnss_decoder {
     } transport;
 
     struct {
-	struct gnss_nmea_decoder *conf;
+	struct gnss_mediatek *conf;
+	gnss_standby_t standby;
+	gnss_wakeup_t wakeup;
+	gnss_reset_t reset;
+    } driver;
+
+    struct {
+	struct gnss_nmea *conf;
 	gnss_decoder_t    decoder;
     } protocol;
     
@@ -88,12 +94,12 @@ gnss_decoder(gnss_t *ctx, uint8_t byte)
 bool gnss_nmea_decoder(gnss_t *ctx, uint8_t byte);
 
 
-void gnss_init(void);
+void _gnss_init(void);
 
 /**
  *
  */
-void gnss_decoder_init(gnss_t *ctx,
+void gnss_init(gnss_t *ctx,
 		       gnss_callback_t callback,
 		       gnss_error_callback_t error_callback);
 

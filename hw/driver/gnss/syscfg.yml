@@ -7,12 +7,6 @@ syscfg.defs:
             They are emited in burst, and depend of the verbosity
             of the GNSS receiver, a goof start could be around 10-20.
         value: 20
-    GNSS_NMEA_EVENT_MAX:
-        description: >
-            Maximum number of raw NMEA string event. (default: 0)
-            Only activate for debugging purpose, as each event is
-            about ~100 bytes.
-        value: 5
     GNSS_RX_ONLY:
         description: >
             If set to 1, only reception of GNSS message is enabled (default: 0).
@@ -21,6 +15,25 @@ syscfg.defs:
         description: >
             Suppport for MeditaTeK 
         value: 1
+    GNSS_NMEA_FIELD_BUFSIZE:
+        description: >
+            Size of the buffer used to decode NMEA field.
+            Changing this value need to be done with care, as it could
+            break the decoding.
+        value: 32
+    GNNS_NMEA_BINARY_THRESHOLD:
+        description: >
+            Trying to detect wrong settings (ie: baud rate, ...)
+            by counting illegal NMEA characters found during the reception.
+            If this threshold is reached, decoder will be stop and
+            an event will be generated.
+        value: 32
+    GNSS_NMEA_EVENT_MAX:
+        description: >
+            Maximum number of raw NMEA string event. (default: 0)
+            Only activate for debugging purpose, as each event is
+            about ~100 bytes.
+        value: 5
     GNSS_NMEA_YEAR_OFFSET:
         description: >
             Offset to use when reading 2-digit year from NMEA sentence.

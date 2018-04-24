@@ -4,18 +4,27 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include <os/os.h>
+#include <syscfg/syscfg.h>
+
 #include <gnss/types.h>
-#include <gnss/mediatek.h>
+#include <gnss/nmea/mediatek.h>
 
 /*
  * See: http://www.catb.org/gpsd/NMEA.html
  */
 
-struct gnss_nmea_decoder;
+struct gnss_nmea;
     
-bool gnss_nmea_init(gnss_t *ctx, struct gnss_nmea_decoder *nmea);
+bool gnss_nmea_init(gnss_t *ctx, struct gnss_nmea *nmea);
 bool gnss_nmea_decoder(gnss_t *ctx, uint8_t byte);
 
+/**
+ * Compute CRC used to validate NMEA sentence.
+ *
+ * @param str		string
+ *
+ * @return crc
+ */
 static inline uint8_t
 gnss_nmea_crc(char *str) {
     uint8_t crc = 0;
@@ -219,18 +228,19 @@ union gnss_nmea_data {
 /**
  * NMEA meassage
  */
-typedef struct gnss_nmea {
+typedef struct gnss_nmea_message {
     uint16_t talker;			/**< Talker Id 		*/
     uint16_t sentence;			/**< Sentence code 	*/
     union gnss_nmea_data data;		/**< Date		*/
-} gnss_nmea_t;
+} gnss_nmea_message_t;
 
 
+#if MYNEWT_VAL(GNSS_NMEA_EVENT_MAX) > 0
 typedef struct gnss_nmea_raw_event {
     struct os_event event;
     char data[GNSS_NMEA_SENTENCE_MAXBYTES];
 } gnss_nmea_raw_event_t;
-
+#endif
 
 
 
@@ -238,7 +248,7 @@ typedef bool (*gnss_nmea_field_decoder_t)(union gnss_nmea_data *, char *field, i
 
 
 
-struct gnss_nmea_decoder {
+struct gnss_nmea {
     gnss_nmea_field_decoder_t field_decoder;
     uint8_t state;
     uint8_t binaries;
@@ -246,7 +256,7 @@ struct gnss_nmea_decoder {
     uint8_t fid;
     uint8_t bufcnt;
     
-    char buffer[GNSS_NMEA_FIELD_BUFSIZE];
+    char buffer[MYNEWT_VAL(GNSS_NMEA_FIELD_BUFSIZE)];
     struct {
 	uint32_t allocation_error;
 	uint32_t parsing_error;
@@ -291,7 +301,7 @@ bool gnss_nmea_decoder_vtg(struct gnss_nmea_vtg *vtg, char *field, int fid);
 
 
 #if MYNEWT_VAL(GNSS_NMEA_LOG) > 0
-void gnss_nmea_log(struct gnss_nmea *nmea);
+void gnss_nmea_log(struct gnss_nmea_message *nmea);
 #if MYNEWT_VAL(GNSS_NMEA_USE_GGA) > 0
 void gnss_nmea_log_gga(struct gnss_nmea_gga *gga);
 #endif

@@ -1,7 +1,7 @@
 #include <string.h>
 #include <gnss/gnss.h>
 #include <gnss/mediatek.h>
-#include <log/log.h>
+#include <gnss/log.h>
 
 static inline
 uint16_t gnss_nmea_pgack_lookup(const char *str) {

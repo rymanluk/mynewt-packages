@@ -46,15 +46,15 @@ gnss_evq_set(struct os_eventq *evq)
 static void
 gnss_event_cb(struct os_event *ev)
 {
-    gnss_event_t   *gnss_event = (gnss_event_t   *) ev;
-    gnss_t *ctx        = (gnss_t *) ev->ev_arg;
+    gnss_event_t *event = (gnss_event_t *) ev;
+    gnss_t       *ctx   = (gnss_t *) ev->ev_arg;
 
     /* Perform logging */
 #if MYNEWT_VAL(GNSS_LOG) > 0
-    switch(gnss_event->type) {
+    switch(event->type) {
 #if MYNEWT_VAL(GNSS_NMEA_LOG) > 0
     case GNSS_EVENT_NMEA:
-	gnss_nmea_log(&gnss_event->nmea);
+	gnss_nmea_log(&event->nmea);
 	break;
 #endif
     }
@@ -62,7 +62,7 @@ gnss_event_cb(struct os_event *ev)
 
     /* Trigger user callback */
     if (ctx->callback) {
-	ctx->callback(gnss_event->type, gnss_event);
+	ctx->callback(event->type, event);
     }
 
     /* Put event back to the memory block */
@@ -143,7 +143,7 @@ gnss_nmea_send_cmd(gnss_t *ctx, char *cmd)
 
 
 void
-gnss_init(void)
+_gnss_init(void)
 {
     int rc;
     
@@ -174,7 +174,7 @@ gnss_init(void)
 }
 
 void
-gnss_decoder_init(gnss_t *ctx,
+gnss_init(gnss_t *ctx,
 		  gnss_callback_t callback,
 		  gnss_error_callback_t error_callback)
 {

@@ -1,5 +1,5 @@
 #include <gnss/gnss.h>
-#include <log/log.h>
+#include <gnss/log.h>
 
 void
 gnss_nmea_log_gsa(struct gnss_nmea_gsa *gsa)
