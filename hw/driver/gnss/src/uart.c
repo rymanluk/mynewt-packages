@@ -68,7 +68,6 @@ gnss_uart_send(gnss_t *ctx, uint8_t *bytes, uint16_t size)
     uart->buffer  = bytes;
     uart->bufsize = size;
     uart_start_tx(uart->dev);
-
     return size;
 }
 

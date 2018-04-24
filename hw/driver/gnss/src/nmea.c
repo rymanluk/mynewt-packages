@@ -328,7 +328,7 @@ gnss_nmea_send_cmd(gnss_t *ctx, char *cmd)
     LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT, "Command: $%s*%s\n", cmd, crc);
     
     for (i = 0 ; i < sizeof(msg) / sizeof(*msg) ; i++) {
-	gnss_send(ctx, (uint8_t*)msg[i], strlen(msg[1]));
+	gnss_send(ctx, (uint8_t*)msg[i], strlen(msg[i]));
     }
 
     /* Ensure a 10 ms delay */
