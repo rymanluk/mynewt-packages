@@ -2,11 +2,23 @@
 Callbacks
 ~~~c
 void gnss_callback(int type, void *data) {
-
+    switch(type) {
+    case GNSS_EVENT_NMEA: {
+	struct gnss_nmea_message *msg = (struct gnss_nmea_message *)data;
+	gnss_nmea_log(msg);
+	break;
+    }
+    }
 }
 
 void gnss_error_callback(gnss_t *ctx, int error) {
-
+     switch(error) {
+     case GNSS_ERROR_WRONG_BAUD_RATE:
+         // Low driver uart has been closed (os_dev_close)
+	 //  by the gnss_uart_rx_char helper
+	 // HERE: Need to change baud rate and call os_dev_open
+         break;
+     }
 }
 ~~~
 
