@@ -1,7 +1,7 @@
 
 Callbacks
 ~~~c
-void gnss_callback(int type, gnss_event_t *event) {
+void gnss_callback(int type, void *data) {
 
 }
 

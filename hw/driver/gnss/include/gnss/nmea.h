@@ -232,13 +232,10 @@ typedef struct gnss_nmea_message {
     union gnss_nmea_data data;		/**< Date		*/
 } gnss_nmea_message_t;
 
-
-#if MYNEWT_VAL(GNSS_NMEA_EVENT_MAX) > 0
-typedef struct gnss_nmea_raw_event {
-    struct os_event event;
-    char data[GNSS_NMEA_SENTENCE_MAXBYTES];
-} gnss_nmea_raw_event_t;
-#endif
+typedef struct gnss_nmea_event {
+    struct gnss_event event; /* Need to be first */
+    struct gnss_nmea_message nmea;
+} gnss_nmea_event_t;
 
 
 

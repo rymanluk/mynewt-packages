@@ -1,6 +1,10 @@
 # Package: hw/driver/gnss
 
 syscfg.defs:
+    GNSS_USE_HALF_FLOAT:
+        description: >
+            Use half-flot instead of float.
+        value: 'ieee'
     GNSS_EVENT_MAX:
         description: >
             Maximum number of pending GNSS event. 
@@ -28,12 +32,6 @@ syscfg.defs:
             If this threshold is reached, decoder will be stop and
             an event will be generated.
         value: 32
-    GNSS_NMEA_EVENT_MAX:
-        description: >
-            Maximum number of raw NMEA string event. (default: 0)
-            Only activate for debugging purpose, as each event is
-            about ~100 bytes.
-        value: 5
     GNSS_NMEA_YEAR_OFFSET:
         description: >
             Offset to use when reading 2-digit year from NMEA sentence.
@@ -74,10 +72,6 @@ syscfg.defs:
         description: >
             Suppport for: VTG - Track made good and Ground speed
         value: 1
-    GNSS_USE_HALF_FLOAT:
-        description: >
-            Use half-flot instead of float.
-        value: 'ieee'
     GNSS_LOG:
         description: >
             Enable logging of GNNS components.

@@ -17,7 +17,7 @@
 #define GNSS_MS_TO_TICKS(ms) (((ms) * OS_TICKS_PER_SEC + 999) / 1000)
 
 
-typedef void (*gnss_callback_t)(int type, gnss_event_t *event);
+typedef void (*gnss_callback_t)(int type, void *data);
 typedef void (*gnss_error_callback_t)(gnss_t *ctx, int error);
 
 typedef bool (*gnss_start_rx_t)(gnss_t *ctx);
@@ -34,13 +34,6 @@ typedef bool (*gnss_reset_t)(gnss_t *ctx, int type);
 
 
 
-struct gnss_event {
-    struct os_event event;
-    uint8_t type;
-    union {
-	struct gnss_nmea_message nmea;
-    };
-};
 
 
 struct gnss_error_event {

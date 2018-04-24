@@ -11,28 +11,31 @@
 struct log _gnss_log;
 
 
+struct gnss_dummy_event {
+    struct gnss_event event; /* Need to be first */
+    uint8_t data[];
+};
+
+
+union gnss_event_memory {
+    struct gnss_dummy_event a;
+    struct gnss_nmea_event b;
+};
+
+
+#define GNSS_MESSAGE_EVENT_MAXSIZE sizeof(union gnss_event_memory)
+
 static struct os_eventq *_gnss_evq = NULL;
 
 static struct os_mempool _gnss_event_pool;
 static os_membuf_t gnss_event_buffer[
 	     OS_MEMPOOL_SIZE(MYNEWT_VAL(GNSS_EVENT_MAX),
-			     sizeof(gnss_event_t))];
+			     GNSS_MESSAGE_EVENT_MAXSIZE)];
 
-
-#if MYNEWT_VAL(GNSS_NMEA_EVENT_MAX) > 0
-static struct os_mempool _gnss_nmea_event_pool;
-static os_membuf_t gnss_nmea_event_buffer[
-	     OS_MEMPOOL_SIZE(MYNEWT_VAL(GNSS_NMEA_EVENT_MAX),
-			     sizeof(gnss_nmea_raw_event_t))];
-#endif
 
 
 
 #define GNSS_MS_TO_TICKS(ms) (((ms) * OS_TICKS_PER_SEC + 999) / 1000)
-
-
-
-
 
 
 
@@ -49,7 +52,7 @@ gnss_event_cb(struct os_event *ev)
     switch(event->type) {
 #if MYNEWT_VAL(GNSS_NMEA_LOG) > 0
     case GNSS_EVENT_NMEA:
-	gnss_nmea_log(&event->nmea);
+        gnss_nmea_log(&((struct gnss_nmea_event *)event)->nmea);
 	break;
 #endif
     }
@@ -57,7 +60,7 @@ gnss_event_cb(struct os_event *ev)
 
     /* Trigger user callback */
     if (ctx->callback) {
-	ctx->callback(event->type, event);
+	ctx->callback(event->type, &((struct gnss_dummy_event*)event)->data);
     }
 
     /* Put event back to the memory block */
@@ -130,19 +133,10 @@ gnss_pkg_init(void)
     /* Initialise memory pool */
     rc = os_mempool_init(&_gnss_event_pool,
 			 MYNEWT_VAL(GNSS_EVENT_MAX),
-			 sizeof(gnss_event_t),
+			 GNSS_MESSAGE_EVENT_MAXSIZE,
 			 gnss_event_buffer,
 			 "gnss_evt_pool");
     assert(rc == 0);
-
-#if MYNEWT_VAL(GNSS_NMEA_EVENT_MAX) > 0
-    rc = os_mempool_init(&_gnss_nmea_event_pool,
-			 MYNEWT_VAL(GNSS_NMEA_EVENT_MAX),
-			 sizeof(gnss_nmea_raw_event_t),
-			 gnss_nmea_event_buffer,
-			 "gnss_nmea_evt_pool");
-    assert(rc == 0);
-#endif
 }
 
 void

@@ -110,7 +110,8 @@ static bool
 gnss_decode_nmea_field(gnss_t *ctx)
 {
     struct gnss_nmea * const nctx = ctx->protocol.conf;
-
+    struct gnss_nmea_event *event;
+	
     /* Check that we are in the main part 
      * (ie: started but no crc, no <cr>)
      */
@@ -127,11 +128,12 @@ gnss_decode_nmea_field(gnss_t *ctx)
     /* Special handling for NMEA tag (field id == 0)
      *  we need to get the dedicated decoder
      */
+    event = (struct gnss_nmea_event *) ctx->gnss_event;
     if (nctx->fid == 0) {
 	nctx->field_decoder =
 	    gnss_nmea_get_field_decoder(nctx->buffer,
-					&ctx->gnss_event->nmea.talker,
-					&ctx->gnss_event->nmea.sentence);
+					&event->nmea.talker,
+					&event->nmea.sentence);
 	/* If we don't have a decoder, just trash everything */
 	if (nctx->field_decoder == NULL) {
 	    nctx->stats.no_decoder++;
@@ -145,8 +147,7 @@ gnss_decode_nmea_field(gnss_t *ctx)
      *  - we are calling decoder for field 0 (ie: tag), which seems
      *    unecessary but is required for proprietary tag (ex: PMTK001)
      */
-    if (!nctx->field_decoder(&ctx->gnss_event->nmea.data,
-			     nctx->buffer, nctx->fid)) {
+    if (!nctx->field_decoder(&event->nmea.data, nctx->buffer, nctx->fid)) {
 	nctx->stats.parsing_error++;
 	return false;
     }

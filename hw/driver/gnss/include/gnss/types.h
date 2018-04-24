@@ -4,8 +4,12 @@
 #include <syscfg/syscfg.h>
 
 
-struct gnss_event;
 struct gnss;
+
+struct gnss_event {
+    struct os_event event;
+    uint8_t type;
+};
 
 typedef struct gnss_event gnss_event_t;
 typedef struct gnss gnss_t;
