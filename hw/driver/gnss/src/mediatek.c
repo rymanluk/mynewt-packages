@@ -3,6 +3,7 @@
 #include <gnss/nmea.h>
 #include <gnss/mediatek.h>
 
+
 bool
 gnss_mediatek_init(gnss_t *ctx, struct gnss_mediatek *mtk) {
     ctx->driver.conf    = mtk;
@@ -11,13 +12,15 @@ gnss_mediatek_init(gnss_t *ctx, struct gnss_mediatek *mtk) {
     ctx->driver.wakeup  = gnss_mediatek_wakeup;
     ctx->driver.reset   = gnss_mediatek_reset;
 
+#ifdef __TO_BE_TESTED__
     if (mtk->reset_pin >= 0) {
 	hal_gpio_init_out(mtk->reset_pin, 1);
     }
     if (mtk->wakeup_pin >= 0) {
 	hal_gpio_init_out(mtk->wakeup_pin, 1);
     }
-
+#endif
+    
     return true;
 }
 
@@ -27,6 +30,7 @@ gnss_mediatek_standby(gnss_t *ctx, int level)
     struct gnss_mediatek *mtk = ctx->driver.conf;
 
     switch(level) {
+#ifdef __TO_BE_TESTED__
     case -1:
 	if (mtk->wakeup_pin < 0) {
 	    return false;
@@ -35,7 +39,8 @@ gnss_mediatek_standby(gnss_t *ctx, int level)
 	gnss_nmea_send_cmd(ctx, "PMTK225,0");
 	gnss_nmea_send_cmd(ctx, "PMTK225,4");
 	break;
-
+#endif
+	
     case 0:
 	gnss_nmea_send_cmd(ctx, "PMTK161,0");
 	break;
@@ -44,20 +49,31 @@ gnss_mediatek_standby(gnss_t *ctx, int level)
 	return false;
     }
 
+    mtk->standby_level = level;
     return true;
 }
 
 bool
 gnss_mediatek_wakeup(gnss_t *ctx)
 {
+    struct gnss_mediatek *mtk = ctx->driver.conf;
 
-#if 0
-    gnss_send("");
-
-    hal_gpio_write(g->wakeup_pin, 1);
+    switch(mtk->standby_level) {
+#if __TO_BE_TESTED__
+    case -1:
+	hal_gpio_write(g->wakeup_pin, 1);
+	break;
 #endif
+
+    case 0:
+	gnss_nmea_send_cmd(ctx, "");
+	break;
+
+    default:
+	return false;
+    }
     
-    return false;
+    return true;
 }
 
 bool

@@ -8,7 +8,8 @@ struct gnss_mediatek {
     int wakeup_pin;       /**< pin use for wakeup             */
     int reset_pin;        /**< pin use for reset              */
     uint16_t cmd_delay;   /**< delay required after a command */
-    int wakeup_level;
+
+    int standby_level;
 };
 
 /**

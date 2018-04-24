@@ -3,7 +3,6 @@
 
 #include <stdint.h>
 #include <uart/uart.h>
-#include <gnss/gnss.h>
 
 /**
  * GNSS UART configuration
@@ -15,7 +14,6 @@ struct gnss_uart {
     uint8_t         *buffer;
     uint16_t         bufsize;
 };
-
 
 /**
  * Helper function to register in UART configuration.
