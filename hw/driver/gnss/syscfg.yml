@@ -19,6 +19,10 @@ syscfg.defs:
         description: >
             Suppport for MeditaTeK 
         value: 1
+    GNSS_USE_NMEA:
+        description: >
+            Suppport for NMEA parser
+        value: 1
     GNSS_NMEA_FIELD_BUFSIZE:
         description: >
             Size of the buffer used to decode NMEA field.

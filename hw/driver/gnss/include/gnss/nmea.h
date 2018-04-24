@@ -23,7 +23,9 @@ struct gnss_nmea;
  *
  * @return true on success
  */
+#if MYNEWT_VAL(GNSS_USE_NMEA) > 0
 bool gnss_nmea_init(gnss_t *ctx, struct gnss_nmea *nmea);
+#endif
 
 /**
  * Compute CRC used to validate NMEA sentence.

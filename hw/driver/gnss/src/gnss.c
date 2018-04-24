@@ -16,14 +16,20 @@ struct gnss_dummy_event {
     uint8_t data[];
 };
 
-
+/* Structure used for computing minimal memory allocation for
+ * supported protocols
+ */
 union gnss_event_memory {
     struct gnss_dummy_event a;
-    struct gnss_nmea_event b;
+#if MYNEWT_VAL(GNSS_USE_NMEA) > 0
+    struct gnss_nmea_event b; 
+#endif
 };
 
 
 #define GNSS_MESSAGE_EVENT_MAXSIZE sizeof(union gnss_event_memory)
+
+
 
 static struct os_eventq *_gnss_evq = NULL;
 
