@@ -45,9 +45,12 @@ struct gnss_event {
 };
 
 
+struct gnss_error_event {
+    struct os_event ev; /* Need to be first */
+};
 
 
-struct gnss_decoder {
+struct gnss {
     struct {
 	struct gnss_uart *conf;
 	gnss_start_rx_t   start_rx;
@@ -68,7 +71,7 @@ struct gnss_decoder {
     } protocol;
     
     int error;
-    struct os_event error_event;
+    struct gnss_error_event error_event;
     gnss_error_callback_t error_callback;
 
     struct gnss_event *gnss_event;
@@ -83,11 +86,11 @@ void gnss_os_emit_error_event(gnss_t *ctx, unsigned int error);
 
 
 
-
 static inline bool
 gnss_decoder(gnss_t *ctx, uint8_t byte)
 {
-    return ctx->protocol.decoder && ctx->protocol.decoder(ctx, byte);
+    return ctx->protocol.decoder &&
+	ctx->protocol.decoder(ctx, byte);
 }
 
 
@@ -96,21 +99,153 @@ bool gnss_nmea_decoder(gnss_t *ctx, uint8_t byte);
 
 void _gnss_init(void);
 
-/**
- *
- */
-void gnss_init(gnss_t *ctx,
-		       gnss_callback_t callback,
-		       gnss_error_callback_t error_callback);
 
 /**
  *
  */
 bool gnss_nmea_send_cmd(gnss_t *ctx, char *cmd);
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/*-- Public API --------------------------------------------------------*/
+
 /**
+ * Specify the event queue to used for generating callback.
+ * (if not sepecified, the default OS event queue is used)
  *
+ * @note Calling this function after initialization result 
+ *       in an undefined behaviour
+ *
+ * @param evq		Event queue
  */
-void gnss_evq_set(struct os_eventq *evq);
+void gnss_eventq_set(struct os_eventq *evq);
+
+/**
+ * Initialise GNSS 
+ *
+ * Further initialisation will be required for:
+ *  o transport : gnss_uart_init
+ *  o protocol  : gnss_nmea_init
+ *  o driver    : gnss_mediatek_init
+ * 
+ * @param ctx		GNSS context
+ * @param callback	Called when a GNSS message is received
+ * @param error_callback  Called when an error has been encoutered
+ */
+void gnss_init(gnss_t *ctx,
+	       gnss_callback_t callback,
+	       gnss_error_callback_t error_callback);
+
+/**
+ * Put device in standby (aka power saving).
+ *
+ * @param ctx		GNSS context
+ * @param level		If supported allow to specify how deep
+ *                      the device should be put in power saving
+ *
+ * @return true if the operation is supported and successful
+ */
+static inline bool
+gnss_standby(gnss_t *ctx, int level)
+{
+    return ctx->driver.standby &&
+	ctx->driver.standby(ctx, level);
+}
+
+/**
+ * Wakeup from power saving
+ *
+ * @param ctx		GNSS context
+ *
+ * @return true if the operation is supported and successful
+ */
+static inline bool
+gnss_wakeup(gnss_t *ctx)
+{
+    return ctx->driver.wakeup &&
+	ctx->driver.wakeup(ctx);
+}
+
+/**
+ * Reset the device
+ *
+ * @param ctx		GNSS context
+ * @param type		Type if reset (hard, soft, ...) if supported
+ *                        o -1 : hard reset
+ *                        o  0 : hot reset
+ *                        o  n : cold reset
+ *
+ * @return true if the operation is supported and successful
+ */
+static inline bool
+gnss_reset(gnss_t *ctx, int type)
+{
+    return ctx->driver.reset &&
+	ctx->driver.reset(ctx, type);
+}
+
+/**
+ * Start receiving GNSS information
+ *
+ * @param ctx		GNSS context
+ * @parem decoder	Decoder used for parsing data
+ *
+ * @return true if the operation is supported and successful
+ */
+static inline bool
+gnss_start_rx(gnss_t *ctx)
+{
+    return ctx->transport.start_rx &&
+	   ctx->protocol.decoder  &&
+	   ctx->transport.start_rx(ctx);
+}
+
+/**
+ * Stop receiving GNSS information
+ *
+ * @param ctx		GNSS context
+ *
+ * @return true if the operation is supported and successful
+ */
+static inline bool
+gnss_stop_rx(gnss_t *ctx)
+{
+    if (ctx->transport.stop_rx) {	
+	ctx->protocol.decoder = NULL;
+	return ctx->transport.stop_rx(ctx);
+    } else {
+	return false;
+    }
+}
+
+/**
+ * Send information to the GNSS module.
+ *  (Whatever it means for the instanciated driver)
+ *
+ * @param ctx		GNSS context
+ * @param bytes		Data to send
+ * @param size		Size of the data to send
+ */
+static inline int
+gnss_send(gnss_t *ctx, uint8_t *bytes, uint16_t size)
+{
+    return ctx->transport.send &&
+	ctx->transport.send(ctx, bytes, size);
+}
 
 #endif

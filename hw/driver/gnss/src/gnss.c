@@ -1,7 +1,7 @@
-#include <stdbool.h>
 #include <string.h>
-#include <gnss/gnss.h>
 #include <stdio.h>
+
+#include <gnss/gnss.h>
 
 #include <uart/uart.h>
 #include <gnss/uart.h>
@@ -90,7 +90,7 @@ gnss_error_event_cb(struct os_event *ev)
 void
 gnss_os_emit_error_event(gnss_t *ctx, unsigned int error)
 {
-    os_eventq_put(_gnss_evq, &ctx->error_event);
+    os_eventq_put(_gnss_evq, &ctx->error_event.ev);
 }
 
 void
@@ -111,35 +111,6 @@ gnss_os_fetch_gnss_event(gnss_t *ctx)
     return evt;
 }
 
-bool
-gnss_nmea_send_cmd(gnss_t *ctx, char *cmd)
-{
-    char  crc[3];
-    char *msg[5];
-    int   i;
-
-    /* Generating crc string */
-    snprintf(crc, sizeof(crc), "%02X", gnss_nmea_crc(cmd));
-
-    /* Building message array */
-    msg[0] = "$";
-    msg[1] = cmd;
-    msg[2] = "*";
-    msg[3] = crc;
-    msg[4] = "\r\n";
-
-    /* Sending command */
-    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT, "Command: $%s*%s\n", cmd, crc);
-    
-    for (i = 0 ; i < sizeof(msg) / sizeof(*msg) ; i++) {
-	gnss_uart_send(ctx, (uint8_t*)msg[i], strlen(msg[1]));
-    }
-
-    /* Ensure a 10 ms delay */
-    os_time_delay(GNSS_MS_TO_TICKS(10));
-
-    return true;
-}
 
 
 void
@@ -182,7 +153,7 @@ gnss_init(gnss_t *ctx,
     ctx->callback           = callback;
     ctx->error_callback     = error_callback;
 
-    ctx->error_event.ev_cb  = gnss_error_event_cb;
-    ctx->error_event.ev_arg = ctx;
+    ctx->error_event.ev.ev_cb  = gnss_error_event_cb;
+    ctx->error_event.ev.ev_arg = ctx;
 
 }

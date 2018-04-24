@@ -5,10 +5,10 @@
 
 
 struct gnss_event;
-struct gnss_decoder;
+struct gnss;
 
 typedef struct gnss_event gnss_event_t;
-typedef struct gnss_decoder gnss_t;
+typedef struct gnss gnss_t;
 
 
 #if defined(MYNEWT_VAL_GNSS_USE_HALF_FLOAT)
