@@ -49,8 +49,6 @@ gnss_nmea_decoder_gst(struct gnss_nmea_gst *gst, char *field, int fid) {
     return success;
 }
 
-#if MYNEWT_VAL(GNSS_LOG) > 0
-#if MYNEWT_VAL(GNSS_NMEA_LOG) > 0
 void
 gnss_nmea_log_gst(struct gnss_nmea_gst *gst)
 {
@@ -73,5 +71,3 @@ gnss_nmea_log_gst(struct gnss_nmea_gst *gst)
 		 "GST: <no valid output>\n");
     }
 }
-#endif
-#endif

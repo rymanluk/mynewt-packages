@@ -77,8 +77,6 @@ gnss_nmea_decoder_pmtk(struct gnss_nmea_pmtk *pmtk, char *field, int fid) {
     return success;
 }
 
-#if MYNEWT_VAL(GNSS_LOG) > 0
-#if MYNEWT_VAL(GNSS_NMEA_LOG) > 0
 void
 gnss_nmea_log_pmtk(struct gnss_nmea_pmtk *pmtk)
 {
@@ -136,5 +134,3 @@ gnss_nmea_log_pmtk(struct gnss_nmea_pmtk *pmtk)
 	break;
     }
 }
-#endif
-#endif

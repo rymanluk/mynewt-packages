@@ -339,8 +339,6 @@ gnss_nmea_send_cmd(gnss_t *ctx, char *cmd)
 }
 
 
-#if MYNEWT_VAL(GNSS_LOG) > 0
-#if MYNEWT_VAL(GNSS_NMEA_LOG) > 0
 void
 gnss_nmea_log(struct gnss_nmea_message *nmea)
 {    
@@ -401,5 +399,3 @@ gnss_nmea_log(struct gnss_nmea_message *nmea)
 	break;
     }
 }
-#endif
-#endif

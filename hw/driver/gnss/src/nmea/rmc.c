@@ -84,8 +84,6 @@ gnss_nmea_decoder_rmc(struct gnss_nmea_rmc *rmc, char *field, int fid) {
     return success;
 }
 
-#if MYNEWT_VAL(GNSS_LOG) > 0
-#if MYNEWT_VAL(GNSS_NMEA_LOG) > 0
 void
 gnss_nmea_log_rmc(struct gnss_nmea_rmc *rmc)
 {
@@ -122,5 +120,3 @@ gnss_nmea_log_rmc(struct gnss_nmea_rmc *rmc)
 		 "RMC: <no valid output>\n");
     }
 }
-#endif
-#endif

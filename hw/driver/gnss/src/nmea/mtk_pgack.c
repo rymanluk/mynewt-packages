@@ -94,8 +94,6 @@ gnss_nmea_decoder_pgack(struct gnss_nmea_pgack *pgack, char *field, int fid) {
     return success;
 }
 
-#if MYNEWT_VAL(GNSS_LOG) > 0
-#if MYNEWT_VAL(GNSS_NMEA_LOG) > 0
 void
 gnss_nmea_log_pgack(struct gnss_nmea_pgack *pgack)
 {
@@ -110,5 +108,3 @@ gnss_nmea_log_pgack(struct gnss_nmea_pgack *pgack)
 		 "PGACK: <unknown>\n");
     }
 }
-#endif
-#endif

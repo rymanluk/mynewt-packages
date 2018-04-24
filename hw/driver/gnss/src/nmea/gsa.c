@@ -65,8 +65,6 @@ gnss_nmea_decoder_gsa(struct gnss_nmea_gsa *gsa, char *field, int fid) {
     return success;
 }
 
-#if MYNEWT_VAL(GNSS_LOG) > 0
-#if MYNEWT_VAL(GNSS_NMEA_LOG) > 0
 void
 gnss_nmea_log_gsa(struct gnss_nmea_gsa *gsa)
 {
@@ -93,5 +91,3 @@ gnss_nmea_log_gsa(struct gnss_nmea_gsa *gsa)
 		 "GSA: <no valid output>\n");
     }
 }
-#endif
-#endif

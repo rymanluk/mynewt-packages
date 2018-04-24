@@ -301,8 +301,6 @@ bool gnss_nmea_decoder_vtg(struct gnss_nmea_vtg *vtg, char *field, int fid);
 #endif
 
 
-#if MYNEWT_VAL(GNSS_LOG) > 0
-#if MYNEWT_VAL(GNSS_NMEA_LOG) > 0
 void gnss_nmea_log(struct gnss_nmea_message *nmea);
 #if MYNEWT_VAL(GNSS_NMEA_USE_GGA) > 0
 void gnss_nmea_log_gga(struct gnss_nmea_gga *gga);
@@ -324,8 +322,6 @@ void gnss_nmea_log_rmc(struct gnss_nmea_rmc *rmc);
 #endif
 #if MYNEWT_VAL(GNSS_NMEA_USE_VTG) > 0
 void gnss_nmea_log_vtg(struct gnss_nmea_vtg *vtg);
-#endif
-#endif
 #endif
 
 #endif

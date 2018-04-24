@@ -43,11 +43,11 @@ syscfg.defs:
     GNSS_NMEA_USE_PGACK:
         description: >
             Suppport for MeditaTeK PGACK sentence
-        value: 1
+        value: MYNEWT_VAL_GNSS_USE_NMEA
     GNSS_NMEA_USE_PMTK:
         description: >
             Suppport for MeditaTeK PMTK sentence
-        value: 1
+        value: MYNEWT_VAL_GNSS_USE_NMEA
     GNSS_NMEA_USE_RMC:
         description: >
             Suppport for: RMC - Recommended Minimum Navigation Information
@@ -55,23 +55,23 @@ syscfg.defs:
     GNSS_NMEA_USE_GGA:
         description: >
             Suppport for: GGA - Global Positioning System Fix Data
-        value: 1
+        value: 0
     GNSS_NMEA_USE_GST:
         description: >
             Suppport for: GST - GPS Pseudorange Noise Statistics
-        value: 1
+        value: 0
     GNSS_NMEA_USE_GSA:
         description: >
             Suppport for: GSA - GPS DOP and active satellites
-        value: 1
+        value: 0
     GNSS_NMEA_USE_GLL:
         description: >
             Suppport for: GLL - Geographic Position - Latitude/Longitude
-        value: 1
+        value: 0
     GNSS_NMEA_USE_GSV:
         description: >
             Suppport for: GSV - Satellites in view
-        value: 1
+        value: 0
     GNSS_NMEA_USE_VTG:
         description: >
             Suppport for: VTG - Track made good and Ground speed
@@ -79,7 +79,7 @@ syscfg.defs:
     GNSS_LOG:
         description: >
             Enable logging of GNNS components.
-        value: 1
+        value: 0
     GNSS_NMEA_LOG:
         description: >
             Enable logging of parsed NMEA.

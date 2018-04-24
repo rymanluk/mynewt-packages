@@ -59,8 +59,6 @@ gnss_nmea_decoder_gll(struct gnss_nmea_gll *gll, char *field, int fid) {
 }
 
 
-#if MYNEWT_VAL(GNSS_LOG) > 0
-#if MYNEWT_VAL(GNSS_NMEA_LOG) > 0
 void
 gnss_nmea_log_gll(struct gnss_nmea_gll *gll)
 {
@@ -84,5 +82,3 @@ gnss_nmea_log_gll(struct gnss_nmea_gll *gll)
 		 "GLL: <no valid output>\n");
     }
 }
-#endif
-#endif

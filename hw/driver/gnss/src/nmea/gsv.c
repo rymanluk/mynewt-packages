@@ -94,8 +94,6 @@ gnss_nmea_decoder_gsv(struct gnss_nmea_gsv *gsv, char *field, int fid) {
     return success;
 }
 
-#if MYNEWT_VAL(GNSS_LOG) > 0
-#if MYNEWT_VAL(GNSS_NMEA_LOG) > 0
 void
 gnss_nmea_log_gsv(struct gnss_nmea_gsv *gsv)
 {
@@ -114,5 +112,3 @@ gnss_nmea_log_gsv(struct gnss_nmea_gsv *gsv)
 		     gsv->sat_info[i].snr);
     }
 }
-#endif
-#endif
