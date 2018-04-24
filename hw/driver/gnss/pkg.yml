@@ -19,3 +19,7 @@ pkg.cflags:
 
 pkg.cflags:
     - -mfp16-format=ieee
+
+pkg.init:
+    gnss_pkg_init: 500
+    

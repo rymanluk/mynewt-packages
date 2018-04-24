@@ -97,7 +97,7 @@ gnss_decoder(gnss_t *ctx, uint8_t byte)
 bool gnss_nmea_decoder(gnss_t *ctx, uint8_t byte);
 
 
-void _gnss_init(void);
+void gnss_pkg_init(void);
 
 
 /**

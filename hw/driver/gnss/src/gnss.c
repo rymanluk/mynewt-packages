@@ -35,11 +35,6 @@ static os_membuf_t gnss_nmea_event_buffer[
 
 
 
-void
-gnss_evq_set(struct os_eventq *evq)
-{
-    _gnss_evq = evq;
-}
 
 
 
@@ -112,9 +107,15 @@ gnss_os_fetch_gnss_event(gnss_t *ctx)
 }
 
 
+void
+gnss_eventq_set(struct os_eventq *evq)
+{
+    _gnss_evq = evq;
+}
+
 
 void
-_gnss_init(void)
+gnss_pkg_init(void)
 {
     int rc;
     
