@@ -25,8 +25,6 @@ struct gnss_nmea;
  */
 bool gnss_nmea_init(gnss_t *ctx, struct gnss_nmea *nmea);
 
-bool gnss_nmea_decoder(gnss_t *ctx, uint8_t byte);
-
 /**
  * Compute CRC used to validate NMEA sentence.
  *
@@ -42,7 +40,6 @@ gnss_nmea_crc(char *str) {
     }
     return crc;
 }
-
 
 /**
  * NMEA max sentence size (including '$', <CR>, <LF>)
@@ -242,6 +239,11 @@ typedef struct gnss_nmea_raw_event {
     char data[GNSS_NMEA_SENTENCE_MAXBYTES];
 } gnss_nmea_raw_event_t;
 #endif
+
+
+
+
+bool gnss_nmea_decoder(gnss_t *ctx, uint8_t byte);
 
 
 

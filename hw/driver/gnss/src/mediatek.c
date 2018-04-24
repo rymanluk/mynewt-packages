@@ -80,16 +80,21 @@ bool
 gnss_mediatek_reset(gnss_t *ctx, int type)
 {
     struct gnss_mediatek *mtk = ctx->driver.conf;
+    
     switch(type) {
     case -1: /* Hard reset */
 	if (mtk->reset_pin < 0) {
 	    return false;
 	}
+#if __TO_BE_TESTED__
 	hal_gpio_write(mtk->reset_pin, 0);
 	os_time_delay(1);
 	hal_gpio_write(mtk->reset_pin, 1);
 	break;
-
+#else
+	return false;
+#endif
+	
     case 0: /* Hot restart */
 	gnss_nmea_send_cmd(ctx, "PMTK101");
 	break;

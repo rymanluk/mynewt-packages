@@ -17,16 +17,14 @@
 #define GNSS_MS_TO_TICKS(ms) (((ms) * OS_TICKS_PER_SEC + 999) / 1000)
 
 
-
 typedef void (*gnss_callback_t)(int type, gnss_event_t *event);
 typedef void (*gnss_error_callback_t)(gnss_t *ctx, int error);
-
-
-typedef bool (*gnss_decoder_t)(gnss_t *ctx, uint8_t byte);
 
 typedef bool (*gnss_start_rx_t)(gnss_t *ctx);
 typedef bool (*gnss_stop_rx_t)(gnss_t *ctx);
 typedef int  (*gnss_send_t)(gnss_t *ctx, uint8_t *bytes, uint16_t size);
+
+typedef bool (*gnss_decoder_t)(gnss_t *ctx, uint8_t byte);
 
 typedef bool (*gnss_standby_t)(gnss_t *ctx, int level);
 typedef bool (*gnss_wakeup_t)(gnss_t *ctx);
@@ -94,30 +92,11 @@ gnss_decoder(gnss_t *ctx, uint8_t byte)
 }
 
 
-bool gnss_nmea_decoder(gnss_t *ctx, uint8_t byte);
 
 
 void gnss_pkg_init(void);
 
-
-/**
- *
- */
 bool gnss_nmea_send_cmd(gnss_t *ctx, char *cmd);
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
