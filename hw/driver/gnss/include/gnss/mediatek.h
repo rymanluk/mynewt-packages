@@ -11,6 +11,14 @@ struct gnss_mediatek {
     int wakeup_level;
 };
 
+/**
+ * Initialize the driver layer with MediaTek device.
+ *
+ * @param ctx		GNSS context 
+ * @param uart		Configuration
+ *
+ * @return true on success
+ */
 bool gnss_mediatek_init(gnss_t *ctx, struct gnss_mediatek *mtk);
 
 bool gnss_mediatek_standby(gnss_t *ctx, int level);

@@ -1,26 +1,6 @@
 #include <gnss/gnss.h>
 #include <gnss/log.h>
 
-void
-gnss_nmea_log_gsv(struct gnss_nmea_gsv *gsv)
-{
-    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-	     "GSV: Count      = %d\n", gsv->msg_count);
-    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-	     "GSV: Idx        = %d\n", gsv->msg_idx);
-    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-	     "GSV: Total      = %d\n", gsv->total_sats);
-    for (int i = 0 ; i < 4 ; i++) {
-	    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		     "GSV: Satellite  = %d, %d, %d, %d\n",
-		     gsv->sat_info[i].prn,
-		     gsv->sat_info[i].elevation,
-		     gsv->sat_info[i].azimuth,
-		     gsv->sat_info[i].snr);
-    }
-}
-
-
 bool
 gnss_nmea_decoder_gsv(struct gnss_nmea_gsv *gsv, char *field, int fid) {
     bool success = true;
@@ -114,4 +94,25 @@ gnss_nmea_decoder_gsv(struct gnss_nmea_gsv *gsv, char *field, int fid) {
     return success;
 }
 
-
+#if MYNEWT_VAL(GNSS_LOG) > 0
+#if MYNEWT_VAL(GNSS_NMEA_LOG) > 0
+void
+gnss_nmea_log_gsv(struct gnss_nmea_gsv *gsv)
+{
+    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+	     "GSV: Count      = %d\n", gsv->msg_count);
+    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+	     "GSV: Idx        = %d\n", gsv->msg_idx);
+    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+	     "GSV: Total      = %d\n", gsv->total_sats);
+    for (int i = 0 ; i < 4 ; i++) {
+	    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		     "GSV: Satellite  = %d, %d, %d, %d\n",
+		     gsv->sat_info[i].prn,
+		     gsv->sat_info[i].elevation,
+		     gsv->sat_info[i].azimuth,
+		     gsv->sat_info[i].snr);
+    }
+}
+#endif
+#endif

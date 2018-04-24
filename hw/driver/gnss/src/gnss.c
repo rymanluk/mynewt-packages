@@ -2,11 +2,11 @@
 #include <stdio.h>
 
 #include <gnss/gnss.h>
-
+#include <gnss/nmea.h>
 #include <uart/uart.h>
 #include <gnss/uart.h>
 
-#include <log/log.h>
+#include <gnss/log.h>
 
 struct log _gnss_log;
 

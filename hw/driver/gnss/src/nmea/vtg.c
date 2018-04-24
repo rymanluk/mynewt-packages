@@ -1,15 +1,6 @@
 #include <gnss/gnss.h>
 #include <gnss/log.h>
 
-void
-gnss_nmea_log_vtg(struct gnss_nmea_vtg *vtg)
-{
-    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-	     "VTG: Track = %f°[T] | %f°[M], Speed = %f m/s, FAA = %c\n",
-	     vtg->true_track, vtg->magnetic_track,
-	     vtg->speed, vtg->faa_mode);
-}
-
 bool
 gnss_nmea_decoder_vtg(struct gnss_nmea_vtg *vtg, char *field, int fid) {
     bool success = true;
@@ -82,4 +73,15 @@ gnss_nmea_decoder_vtg(struct gnss_nmea_vtg *vtg, char *field, int fid) {
     return success;
 }
 
-
+#if MYNEWT_VAL(GNSS_LOG) > 0
+#if MYNEWT_VAL(GNSS_NMEA_LOG) > 0
+void
+gnss_nmea_log_vtg(struct gnss_nmea_vtg *vtg)
+{
+    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+	     "VTG: Track = %f°[T] | %f°[M], Speed = %f m/s, FAA = %c\n",
+	     vtg->true_track, vtg->magnetic_track,
+	     vtg->speed, vtg->faa_mode);
+}
+#endif
+#endif

@@ -1,30 +1,6 @@
 #include <gnss/gnss.h>
 #include <gnss/log.h>
 
-void
-gnss_nmea_log_gst(struct gnss_nmea_gst *gst)
-{
-    if (gst->time.present) {
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "GST: Time = %2d:%02d:%02d.%03d, RMS = %f, SM = %f (%f°), Sm = %f, Lat = %f, Lng = %f, Alt = %f\n",
-		 gst->time.hours,
-		 gst->time.minutes,
-		 gst->time.seconds,
-		 gst->time.microseconds / 1000,
-		 gst->rms_stddev,
-		 gst->semi_major_stddev,
-		 gst->semi_major_orientation,
-		 gst->semi_minor_stddev,
-		 gst->latitude_stddev,
-		 gst->longitude_stddev,
-		 gst->altitude_stddev);
-    } else {
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "GST: <no valid output>\n");
-    }
-}
-
-
 bool
 gnss_nmea_decoder_gst(struct gnss_nmea_gst *gst, char *field, int fid) {
     bool success = true;
@@ -73,4 +49,29 @@ gnss_nmea_decoder_gst(struct gnss_nmea_gst *gst, char *field, int fid) {
     return success;
 }
 
-
+#if MYNEWT_VAL(GNSS_LOG) > 0
+#if MYNEWT_VAL(GNSS_NMEA_LOG) > 0
+void
+gnss_nmea_log_gst(struct gnss_nmea_gst *gst)
+{
+    if (gst->time.present) {
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GST: Time = %2d:%02d:%02d.%03d, RMS = %f, SM = %f (%f°), Sm = %f, Lat = %f, Lng = %f, Alt = %f\n",
+		 gst->time.hours,
+		 gst->time.minutes,
+		 gst->time.seconds,
+		 gst->time.microseconds / 1000,
+		 gst->rms_stddev,
+		 gst->semi_major_stddev,
+		 gst->semi_major_orientation,
+		 gst->semi_minor_stddev,
+		 gst->latitude_stddev,
+		 gst->longitude_stddev,
+		 gst->altitude_stddev);
+    } else {
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GST: <no valid output>\n");
+    }
+}
+#endif
+#endif

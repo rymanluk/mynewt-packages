@@ -15,7 +15,16 @@
 
 struct gnss_nmea;
     
+/**
+ * Initialize the protocol layer for parsing NMEA sentence.
+ *
+ * @param ctx		GNSS context 
+ * @param uart		Configuration
+ *
+ * @return true on success
+ */
 bool gnss_nmea_init(gnss_t *ctx, struct gnss_nmea *nmea);
+
 bool gnss_nmea_decoder(gnss_t *ctx, uint8_t byte);
 
 /**
@@ -33,14 +42,6 @@ gnss_nmea_crc(char *str) {
     }
     return crc;
 }
-
-/*
- * Config
- */
-#define GNSS_NMEA_FIELD_BUFSIZE  32
-
-#define GNNS_NMEA_BINARY_THRESHOLD 32
-
 
 
 /**
@@ -299,7 +300,7 @@ bool gnss_nmea_decoder_vtg(struct gnss_nmea_vtg *vtg, char *field, int fid);
 #endif
 
 
-
+#if MYNEWT_VAL(GNSS_LOG) > 0
 #if MYNEWT_VAL(GNSS_NMEA_LOG) > 0
 void gnss_nmea_log(struct gnss_nmea_message *nmea);
 #if MYNEWT_VAL(GNSS_NMEA_USE_GGA) > 0
@@ -324,6 +325,6 @@ void gnss_nmea_log_rmc(struct gnss_nmea_rmc *rmc);
 void gnss_nmea_log_vtg(struct gnss_nmea_vtg *vtg);
 #endif
 #endif
-
+#endif
 
 #endif

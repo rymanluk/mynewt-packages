@@ -1,44 +1,6 @@
 #include <gnss/gnss.h>
 #include <gnss/log.h>
 
-void
-gnss_nmea_log_rmc(struct gnss_nmea_rmc *rmc)
-{
-    if (rmc->date.present) {
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "RMC: Date       = %2d-%02d-%02d\n",
-		 rmc->date.year,
-		 rmc->date.month,
-		 rmc->date.day);
-    }
-    if (rmc->time.present) {
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "RMC: Time       = %2d:%02d:%02d.%03d\n",
-		       rmc->time.hours,
-		       rmc->time.minutes,
-		       rmc->time.seconds,
-		       rmc->time.microseconds / 1000);
-    }
-    if (rmc->valid) {
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "RMC: LatLng     = %f, %f\n", rmc->latitude, rmc->longitude);
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "RMC: Speed      = %f\n", rmc->speed);
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "RMC: Course     = %f\n", rmc->course);
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "RMC: Variation  = %f\n", rmc->variation);
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "RMC: FAA mode   = %c\n", rmc->faa_mode);
-    }
-
-    if (!rmc->date.present && !rmc->time.present && !rmc->valid) {
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "RMC: <no valid output>\n");
-    }
-}
-
-
 bool
 gnss_nmea_decoder_rmc(struct gnss_nmea_rmc *rmc, char *field, int fid) {
     bool success = true;
@@ -122,4 +84,43 @@ gnss_nmea_decoder_rmc(struct gnss_nmea_rmc *rmc, char *field, int fid) {
     return success;
 }
 
+#if MYNEWT_VAL(GNSS_LOG) > 0
+#if MYNEWT_VAL(GNSS_NMEA_LOG) > 0
+void
+gnss_nmea_log_rmc(struct gnss_nmea_rmc *rmc)
+{
+    if (rmc->date.present) {
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "RMC: Date       = %2d-%02d-%02d\n",
+		 rmc->date.year,
+		 rmc->date.month,
+		 rmc->date.day);
+    }
+    if (rmc->time.present) {
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "RMC: Time       = %2d:%02d:%02d.%03d\n",
+		       rmc->time.hours,
+		       rmc->time.minutes,
+		       rmc->time.seconds,
+		       rmc->time.microseconds / 1000);
+    }
+    if (rmc->valid) {
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "RMC: LatLng     = %f, %f\n", rmc->latitude, rmc->longitude);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "RMC: Speed      = %f\n", rmc->speed);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "RMC: Course     = %f\n", rmc->course);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "RMC: Variation  = %f\n", rmc->variation);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "RMC: FAA mode   = %c\n", rmc->faa_mode);
+    }
 
+    if (!rmc->date.present && !rmc->time.present && !rmc->valid) {
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "RMC: <no valid output>\n");
+    }
+}
+#endif
+#endif

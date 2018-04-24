@@ -1,36 +1,6 @@
 #include <gnss/gnss.h>
 #include <gnss/log.h>
 
-void
-gnss_nmea_log_gga(struct gnss_nmea_gga *gga)
-{
-    if (gga->time.present) {
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "GGA: Time       = %2d:%02d:%02d.%03d\n",
-		 gga->time.hours,
-		 gga->time.minutes,
-		 gga->time.seconds,
-		 gga->time.microseconds / 1000);
-    }
-
-    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-	     "GGA: DGPS       = %d (%d)\n", gga->dgps_age, gga->dgps_sid);
-    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-	     "GGA: Geoid sep. = %f\n", gga->geoid_separation);
-    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-	     "GGA: LatLng     = %f, %f\n", gga->latitude, gga->longitude);
-    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-	     "GGA: Altitude   = %f \n", gga->altitude);
-    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-	     "GGA: HDOP       = %f\n", gga->hdop);
-    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-	     "GGA: FIX        = %d\n", gga->fix_indicator);
-    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-	     "GGA: Satellites = %d\n", gga->satellites_in_view);
-}
-
-
-
 bool
 gnss_nmea_decoder_gga(struct gnss_nmea_gga *gga, char *field, int fid) {
     bool success = true;
@@ -135,4 +105,34 @@ gnss_nmea_decoder_gga(struct gnss_nmea_gga *gga, char *field, int fid) {
     return success;
 }
 
+#if MYNEWT_VAL(GNSS_LOG) > 0
+#if MYNEWT_VAL(GNSS_NMEA_LOG) > 0
+void
+gnss_nmea_log_gga(struct gnss_nmea_gga *gga)
+{
+    if (gga->time.present) {
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GGA: Time       = %2d:%02d:%02d.%03d\n",
+		 gga->time.hours,
+		 gga->time.minutes,
+		 gga->time.seconds,
+		 gga->time.microseconds / 1000);
+    }
 
+    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+	     "GGA: DGPS       = %d (%d)\n", gga->dgps_age, gga->dgps_sid);
+    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+	     "GGA: Geoid sep. = %f\n", gga->geoid_separation);
+    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+	     "GGA: LatLng     = %f, %f\n", gga->latitude, gga->longitude);
+    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+	     "GGA: Altitude   = %f \n", gga->altitude);
+    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+	     "GGA: HDOP       = %f\n", gga->hdop);
+    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+	     "GGA: FIX        = %d\n", gga->fix_indicator);
+    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+	     "GGA: Satellites = %d\n", gga->satellites_in_view);
+}
+#endif
+#endif

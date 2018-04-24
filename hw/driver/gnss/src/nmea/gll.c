@@ -1,30 +1,6 @@
 #include <gnss/gnss.h>
 #include <gnss/log.h>
 
-void
-gnss_nmea_log_gll(struct gnss_nmea_gll *gll)
-{
-    if (gll->time.present) {
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "GLL: Time       = %2d:%02d:%02d.%03d\n",
-		       gll->time.hours,
-		       gll->time.minutes,
-		       gll->time.seconds,
-		       gll->time.microseconds / 1000);
-    }
-    if (gll->valid) {
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "GLL: LatLng     = %f, %f\n", gll->latitude, gll->longitude);
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "GLL: FAA mode   = %c\n", gll->faa_mode);
-    }
-
-    if (!gll->time.present && !gll->valid) {
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "GLL: <no valid output>\n");
-    }
-}
-
 bool
 gnss_nmea_decoder_gll(struct gnss_nmea_gll *gll, char *field, int fid) {
     bool success = true;
@@ -83,3 +59,30 @@ gnss_nmea_decoder_gll(struct gnss_nmea_gll *gll, char *field, int fid) {
 }
 
 
+#if MYNEWT_VAL(GNSS_LOG) > 0
+#if MYNEWT_VAL(GNSS_NMEA_LOG) > 0
+void
+gnss_nmea_log_gll(struct gnss_nmea_gll *gll)
+{
+    if (gll->time.present) {
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GLL: Time       = %2d:%02d:%02d.%03d\n",
+		       gll->time.hours,
+		       gll->time.minutes,
+		       gll->time.seconds,
+		       gll->time.microseconds / 1000);
+    }
+    if (gll->valid) {
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GLL: LatLng     = %f, %f\n", gll->latitude, gll->longitude);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GLL: FAA mode   = %c\n", gll->faa_mode);
+    }
+
+    if (!gll->time.present && !gll->valid) {
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GLL: <no valid output>\n");
+    }
+}
+#endif
+#endif

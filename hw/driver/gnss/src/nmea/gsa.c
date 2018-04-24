@@ -1,34 +1,6 @@
 #include <gnss/gnss.h>
 #include <gnss/log.h>
 
-void
-gnss_nmea_log_gsa(struct gnss_nmea_gsa *gsa)
-{
-    if (gsa->fix_mode != 0) {
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "GSA: PDOP       = %f\n", gsa->pdop);
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "GSA: HDOP       = %f\n", gsa->hdop);
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "GSA: VDOP       = %f\n", gsa->vdop);
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "GSA: Satellites =");
-	for (int i = 0 ; i < 12 ; i++) {
-	    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		     " %d", gsa->sid[i]);
-	}
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 " \n");
-	
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "GSA: FIX mode   = %d\n", gsa->fix_mode);
-    } else {
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "GSA: <no valid output>\n");
-    }
-}
-
-
 
 bool
 gnss_nmea_decoder_gsa(struct gnss_nmea_gsa *gsa, char *field, int fid) {
@@ -93,4 +65,33 @@ gnss_nmea_decoder_gsa(struct gnss_nmea_gsa *gsa, char *field, int fid) {
     return success;
 }
 
-
+#if MYNEWT_VAL(GNSS_LOG) > 0
+#if MYNEWT_VAL(GNSS_NMEA_LOG) > 0
+void
+gnss_nmea_log_gsa(struct gnss_nmea_gsa *gsa)
+{
+    if (gsa->fix_mode != 0) {
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GSA: PDOP       = %f\n", gsa->pdop);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GSA: HDOP       = %f\n", gsa->hdop);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GSA: VDOP       = %f\n", gsa->vdop);
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GSA: Satellites =");
+	for (int i = 0 ; i < 12 ; i++) {
+	    LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		     " %d", gsa->sid[i]);
+	}
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 " \n");
+	
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GSA: FIX mode   = %d\n", gsa->fix_mode);
+    } else {
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "GSA: <no valid output>\n");
+    }
+}
+#endif
+#endif

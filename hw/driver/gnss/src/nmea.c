@@ -269,7 +269,7 @@ gnss_nmea_decoder(gnss_t *ctx, uint8_t byte)
 	/* Ensure that's a legal character           */
 	/*  => helping detection of wrong baud rate  */
 	if (!isprint(byte)) {
-	    if (++nctx->binaries > GNNS_NMEA_BINARY_THRESHOLD) {
+	    if (++nctx->binaries > MYNEWT_VAL(GNNS_NMEA_BINARY_THRESHOLD)) {
 		/* Generate error */
 		gnss_os_emit_error_event(ctx, GNSS_ERROR_WRONG_BAUD_RATE);
 		/* Terminate RX */
@@ -285,7 +285,7 @@ gnss_nmea_decoder(gnss_t *ctx, uint8_t byte)
 	    goto trash_it;
 	}
 	/* Check that buffer is not full (keeping 1 byte for NUL-char) */
-	if (nctx->bufcnt >= (GNSS_NMEA_FIELD_BUFSIZE-1)) {
+	if (nctx->bufcnt >= (MYNEWT_VAL(GNSS_NMEA_FIELD_BUFSIZE)-1)) {
 	    nctx->stats.buffer_full++;
 	    goto error;
 	}       
@@ -337,6 +337,9 @@ gnss_nmea_send_cmd(gnss_t *ctx, char *cmd)
     return true;
 }
 
+
+#if MYNEWT_VAL(GNSS_LOG) > 0
+#if MYNEWT_VAL(GNSS_NMEA_LOG) > 0
 void
 gnss_nmea_log(struct gnss_nmea_message *nmea)
 {    
@@ -397,3 +400,5 @@ gnss_nmea_log(struct gnss_nmea_message *nmea)
 	break;
     }
 }
+#endif
+#endif

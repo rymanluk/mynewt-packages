@@ -27,21 +27,6 @@ uint16_t gnss_nmea_pgack_lookup(const char *str) {
     return lookup_table[i].msg;
 }
 
-void
-gnss_nmea_log_pgack(struct gnss_nmea_pgack *pgack)
-{
-    if (pgack->type < 1000) {
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "PGACK[%d]: %d\n", pgack->type, pgack->msg);
-    } else if (pgack->type == GNSS_NMEA_PGACK_TYPE_EPE) {
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "PGACK[EPE]: h=%f, v=%f\n", pgack->epe.h, pgack->epe.v);
-    } else {
-	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
-		 "PGACK: <unknown>\n");
-    }
-}
-
 bool
 gnss_nmea_decoder_pgack(struct gnss_nmea_pgack *pgack, char *field, int fid) {
     bool success = true;
@@ -109,4 +94,21 @@ gnss_nmea_decoder_pgack(struct gnss_nmea_pgack *pgack, char *field, int fid) {
     return success;
 }
 
-
+#if MYNEWT_VAL(GNSS_LOG) > 0
+#if MYNEWT_VAL(GNSS_NMEA_LOG) > 0
+void
+gnss_nmea_log_pgack(struct gnss_nmea_pgack *pgack)
+{
+    if (pgack->type < 1000) {
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "PGACK[%d]: %d\n", pgack->type, pgack->msg);
+    } else if (pgack->type == GNSS_NMEA_PGACK_TYPE_EPE) {
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "PGACK[EPE]: h=%f, v=%f\n", pgack->epe.h, pgack->epe.v);
+    } else {
+	LOG_INFO(&_gnss_log, LOG_MODULE_DEFAULT,
+		 "PGACK: <unknown>\n");
+    }
+}
+#endif
+#endif
