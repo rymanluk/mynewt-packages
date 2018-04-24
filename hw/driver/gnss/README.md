@@ -3,22 +3,18 @@ Callbacks
 ~~~c
 void gnss_callback(int type, gnss_event_t *event) {
 
-    console_printf("Talker: %d\n", event->nmea.talker);
 }
 
-void gnss_error_callback(gnss_decoder_t *ctx, int error) {
-    console_printf("GNSS terminated on error %d\n", error);
+void gnss_error_callback(gnss_t *ctx, int error) {
+
 }
 ~~~
 
 
 Initialisation
 ~~~c
-   gnss_decoder_t gnss_decoder_context;
-   
-   gnss_decoder_init(&gnss_decoder_context, GNSS_DECODER_NMEA,
-		      gnss_callback, gnss_error_callback);
-    
+    gnss_t xa1110;
+       
     struct uart_conf uc = {
         .uc_speed    = 115200,
         .uc_databits = 8,
@@ -28,16 +24,30 @@ Initialisation
         .uc_tx_char  = gnss_uart_tx_char,
         .uc_rx_char  = gnss_uart_rx_char,
 	.uc_tx_done  = gnss_uart_tx_done,
-	.uc_cb_arg   = &gnss_decoder_context,
+	.uc_cb_arg   = &xa1110,
     };
 
-    gnss_decoder_context.uart_dev =
-	(struct uart_dev *)os_dev_open("uart1", OS_TIMEOUT_NEVER, &uc);
+    struct gnss_uart gnss_uart = {
+	.dev            = (struct uart_dev *)os_dev_lookup("uart1"),
+    };
+    struct gnss_nmea gnss_nmea = {
+    };
+    struct gnss_mediatek gnss_mediatek = {
+	.wakeup_pin     = -1,
+	.reset_pin      = -1,
+	.cmd_delay      = 10,
+    };
 
+    gnss_init(&xa1110, gnss_callback, gnss_error_callback);
+    gnss_uart_init(&xa1110, &gnss_uart);	  /* Transport: UART     */
+    gnss_nmea_init(&xa1110, &gnss_nmea);	  /* Protocol : NMEA     */
+    gnss_mediatek_init(&xa1110, &gnss_mediatek);  /* Driver   : MediaTek */
+    
+    os_dev_open("uart1", OS_TIMEOUT_NEVER, &uc);
 ~~~
 
 
 Sending command:
 ~~~c
-    gnss_nmea_send_cmd(g, "PMTK285,4,100");      // PPS Always
+    gnss_nmea_send_cmd(&xa1110, "PMTK285,4,100");      // PPS Always
 ~~~
